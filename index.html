@@ -1,0 +1,900 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Зелений сигнал</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1C2128">
+<meta name="description" content="Безкоштовні тести ПДР України: білети по 20 питань, ігровий режим, дорожні знаки. Працює без інтернету.">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ПДР">
+<style>:root{padding-top:env(safe-area-inset-top,0px)}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: app shell — sidebar rail on desktop, bottom tab bar on phone; asphalt hero band with a dashed marking line as the level track. */
+:root{
+  --bg:#ECEFF3; --surface:#FFFFFF; --surface-2:#F5F7FA; --ink:#141920; --muted:#5A6472; --line:#D6DCE3;
+  --blue:#1D5BC4; --blue-soft:#E3ECFA; --yellow:#F2C200; --red:#C8232C; --red-soft:#FBE7E8; --green:#15814A; --green-soft:#E2F3E9;
+  --asphalt:#1C2128; --asphalt-ink:#F1F3F6; --asphalt-muted:#9AA3AF;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --f-body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:14px; --nav-h:68px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101318; --surface:#181D24; --surface-2:#1F252E; --ink:#E8ECF1; --muted:#98A2AF; --line:#2A313B;
+  --blue:#6B9DF2; --blue-soft:#1C2A42; --yellow:#F5C928; --red:#F0636A; --red-soft:#3A1E22; --green:#45C584; --green-soft:#16301F;
+  --asphalt:#0A0C0F; --asphalt-ink:#F1F3F6; --asphalt-muted:#8E97A3; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101318; --surface:#181D24; --surface-2:#1F252E; --ink:#E8ECF1; --muted:#98A2AF; --line:#2A313B;
+  --blue:#6B9DF2; --blue-soft:#1C2A42; --yellow:#F5C928; --red:#F0636A; --red-soft:#3A1E22; --green:#45C584; --green-soft:#16301F;
+  --asphalt:#0A0C0F; --asphalt-ink:#F1F3F6; --asphalt-muted:#8E97A3; color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(1.5rem,4vw,2.1rem)} h2{font-size:1.25rem} h3{font-size:1.02rem}
+p{margin:0}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+
+/* shell */
+.shell{display:grid;grid-template-columns:1fr;min-height:100%}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:space-around;background:var(--surface);border-top:1px solid var(--line);
+  padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+.brand{display:none}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:0;padding:6px 2px;border-radius:10px;font-size:.7rem;font-weight:600;color:var(--muted)}
+.nav button svg{width:24px;height:24px}
+.nav button[aria-current="page"]{color:var(--blue)}
+.nav button[aria-current="page"] .nav-ic{background:var(--blue-soft)}
+.nav-ic{display:grid;place-items:center;width:46px;height:28px;border-radius:14px}
+main{min-width:0;padding-block:20px calc(var(--nav-h) + 28px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.page{max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+body.focus .nav{display:none}
+body.focus main{padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
+@media (min-width:900px){
+  .shell{grid-template-columns:236px 1fr}
+  .nav{position:sticky;top:0;bottom:auto;height:100vh;flex-direction:column;justify-content:flex-start;gap:4px;border-top:0;border-right:1px solid var(--line);padding:22px 14px}
+  .brand{display:flex;align-items:center;gap:10px;padding:4px 8px 22px}
+  .brand b{font-family:var(--f-display);font-size:1rem;line-height:1.1}
+  .nav button{flex:none;flex-direction:row;gap:12px;font-size:.95rem;padding:8px 10px;justify-content:flex-start}
+  .nav button[aria-current="page"]{background:var(--blue-soft)}
+  .nav button[aria-current="page"] .nav-ic{background:none}
+  .nav-ic{width:28px;height:28px}
+  main{padding-block:36px 48px}
+  body.focus .nav{display:flex}
+  body.focus main{padding-bottom:48px}
+}
+.lamp{display:inline-flex;flex-direction:column;gap:3px;background:var(--asphalt);padding:5px 6px;border-radius:9px}
+.lamp i{width:9px;height:9px;border-radius:50%;background:#3a414c}
+.lamp i.on{background:#2FD07A;box-shadow:0 0 8px #2FD07A}
+
+/* hero */
+.hero{background:var(--asphalt);color:var(--asphalt-ink);border-radius:22px;padding:22px 22px 0;overflow:hidden;display:flex;flex-direction:column;gap:14px}
+.hero .eyebrow{color:var(--asphalt-muted)}
+.hero h1{font-weight:800}
+.hero-row{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.08)}
+.chip b{font-family:var(--f-mono);font-weight:700}
+.road{position:relative;height:62px;margin:4px -22px 0}
+.road::before{content:"";position:absolute;left:0;right:0;top:50%;height:4px;transform:translateY(-50%);
+  background:repeating-linear-gradient(90deg,var(--yellow) 0 26px,transparent 26px 44px);opacity:.9}
+.road .done{position:absolute;left:0;top:50%;height:4px;transform:translateY(-50%);background:var(--yellow);box-shadow:0 0 10px rgba(242,194,0,.6)}
+.road .car{position:absolute;top:50%;transform:translate(-50%,-50%);transition:left .8s cubic-bezier(.2,.8,.2,1)}
+.road .car svg{width:44px;height:24px;display:block}
+.road-labels{display:flex;justify-content:space-between;font-size:.75rem;color:var(--asphalt-muted);padding:0 0 14px}
+
+/* cards & grid */
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.action{display:flex;gap:14px;align-items:flex-start;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;transition:transform .15s,border-color .15s}
+.action:hover{border-color:var(--blue);transform:translateY(-1px)}
+.action .ic{flex:none;width:52px;height:52px;display:grid;place-items:center;border-radius:12px;background:var(--surface-2)}
+.action .ic svg{width:40px;height:40px}
+.action div{min-width:0;display:flex;flex-direction:column;gap:3px}
+.action b{font-family:var(--f-display);font-weight:700;font-size:1rem}
+.action span{color:var(--muted);font-size:.88rem}
+.action.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.action.primary span{color:rgba(255,255,255,.85)}
+.action.primary .ic{background:rgba(255,255,255,.15)}
+.section{display:flex;flex-direction:column;gap:12px}
+.section-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.link{background:none;border:0;color:var(--blue);font-weight:600;padding:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:12px 18px;font-weight:600;background:var(--blue);color:#fff;min-height:46px}
+.btn.ghost{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:var(--red);color:#fff}
+.btn.go{background:var(--green);color:#fff}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px}
+.bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--green);border-radius:99px}
+.topic{display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.topic:hover{border-color:var(--blue)}
+.topic b{font-weight:600}
+.topic .bar{grid-column:1/-1}
+.stats{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.stat b{display:block;font-family:var(--f-mono);font-size:1.5rem;font-weight:700}
+.stat span{font-size:.82rem;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;font-size:.76rem;font-weight:700;padding:3px 9px;border-radius:99px}
+.pill.ok{background:var(--green-soft);color:var(--green)} .pill.bad{background:var(--red-soft);color:var(--red)}
+.history{display:flex;flex-direction:column;gap:6px}
+.hist-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;font-size:.9rem}
+.rules{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.rule{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:2px}
+.rule b{font-family:var(--f-display);font-size:1.5rem}
+.ach{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr))}
+.badge{display:flex;gap:10px;align-items:center;padding:12px;border-radius:12px;border:1px dashed var(--line);color:var(--muted)}
+.badge .medal{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);font-family:var(--f-display);font-weight:800;font-size:.8rem}
+.badge.on{border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.badge.on .medal{background:var(--yellow);color:#1b1b1b}
+.badge div{min-width:0} .badge b{display:block;font-size:.9rem} .badge span{font-size:.78rem}
+textarea{width:100%;min-height:110px;resize:vertical;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink);padding:10px;font:13px/1.45 var(--f-mono)}
+details.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+details.box summary{cursor:pointer;font-weight:600}
+details.box[open] summary{margin-bottom:10px}
+.confirm{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:12px;background:var(--red-soft);border:1px solid var(--red)}
+
+/* quiz */
+.qtop{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;display:flex;flex-direction:column;gap:10px}
+.qbar{display:flex;align-items:center;gap:12px}
+.qbar .x{flex:none;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center}
+.qbar .ttl{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qbar .meta{display:flex;align-items:center;gap:10px;font-family:var(--f-mono);font-weight:700}
+.timer{padding:6px 10px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.timer.low{background:var(--red-soft);color:var(--red);border-color:var(--red)}
+.hearts{display:flex;gap:3px} .hearts svg{width:22px;height:22px}
+.combo{padding:5px 10px;border-radius:10px;background:var(--yellow);color:#1b1b1b;font-size:.85rem}
+.combo.pop{animation:pop .35s ease}
+@keyframes pop{50%{transform:scale(1.25)}}
+.cells{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+.cells button{height:34px;min-width:0;border-radius:7px;border:1px solid var(--line);background:var(--surface);font:600 .78rem var(--f-mono);padding:0}
+.cells button.cur{border:2px solid var(--blue)}
+.cells button.ok{background:var(--green);border-color:var(--green);color:#fff}
+.cells button.bad{background:var(--red);border-color:var(--red);color:#fff}
+.track{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.track i{display:block;height:100%;background:var(--blue);transition:width .3s}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.qhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.qtext{font-size:1.18rem;font-weight:600;line-height:1.4}
+.qmedia{display:flex;justify-content:center;padding:14px;background:var(--surface-2);border-radius:12px}
+.qmedia .sign{width:clamp(110px,30vw,150px);height:auto}
+.qmedia img{border-radius:8px;max-height:320px}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:13px 14px;min-height:52px;transition:border-color .12s,background .12s}
+.opt:hover:not(:disabled){border-color:var(--blue);background:var(--blue-soft)}
+.opt .k{flex:none;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--surface-2);font:700 .85rem var(--f-mono)}
+.opt span{min-width:0;padding-top:2px}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--green);background:var(--green-soft)} .opt.right .k{background:var(--green);color:#fff}
+.opt.wrong{border-color:var(--red);background:var(--red-soft)} .opt.wrong .k{background:var(--red);color:#fff}
+.opt.picked{border-color:var(--blue);background:var(--blue-soft)}
+.fb{border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;border-left:5px solid var(--green);background:var(--green-soft)}
+.fb.bad{border-left-color:var(--red);background:var(--red-soft)}
+.fb b{font-family:var(--f-display);font-size:1rem}
+.fb .ref{font-size:.82rem;color:var(--muted);font-weight:600}
+.qfoot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.kbd{font-size:.78rem;color:var(--muted)}
+.flash{animation:flash .5s ease}
+@keyframes flash{0%{box-shadow:0 0 0 0 var(--red)}100%{box-shadow:0 0 0 14px transparent}}
+.shake{animation:shake .35s ease}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* result */
+.result{text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;padding:30px 20px;border-radius:22px;background:var(--asphalt);color:var(--asphalt-ink)}
+.result .big{font-family:var(--f-display);font-weight:800;font-size:clamp(2.6rem,10vw,4rem);line-height:1}
+.result .muted{color:var(--asphalt-muted)}
+.verdict{font-family:var(--f-display);font-weight:800;font-size:1.3rem;padding:8px 16px;border-radius:12px}
+.verdict.ok{background:#18A35A;color:#fff} .verdict.bad{background:#D93A41;color:#fff}
+.review{display:flex;flex-direction:column;gap:8px}
+.review details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.review summary{cursor:pointer;display:flex;gap:10px;align-items:flex-start;list-style:none}
+.review summary::-webkit-details-marker{display:none}
+.review .n{flex:none;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font:700 .78rem var(--f-mono);color:#fff;background:var(--green)}
+.review .n.bad{background:var(--red)}
+.review .body{display:flex;flex-direction:column;gap:6px;padding:10px 0 2px 36px;font-size:.92rem}
+
+#toasts{position:fixed;z-index:50;left:50%;transform:translateX(-50%);top:calc(14px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:8px;width:min(92vw,380px);pointer-events:none}
+.toast{background:var(--asphalt);color:var(--asphalt-ink);border-radius:14px;padding:12px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:tin .3s ease}
+.toast .medal{flex:none;width:34px;height:34px;border-radius:50%;background:var(--yellow);color:#1b1b1b;display:grid;place-items:center;font:800 .75rem var(--f-display)}
+.toast b{display:block;font-size:.92rem} .toast span{font-size:.82rem;color:var(--asphalt-muted)}
+@keyframes tin{from{opacity:0;transform:translateY(-10px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="nav" id="nav" aria-label="Розділи">
+    <div class="brand"><span class="lamp" aria-hidden="true"><i></i><i></i><i class="on"></i></span><b>Зелений<br>сигнал</b></div>
+    <button data-go="home"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span>Головна</button>
+    <button data-go="ticket"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v4a2 2 0 0 0 0 4v4H4v-4a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2.5"/></svg></span>Білет</button>
+    <button data-go="game"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3"/><circle cx="16" cy="11.5" r=".6" fill="currentColor"/><circle cx="18" cy="13.5" r=".6" fill="currentColor"/></svg></span>Гра</button>
+    <button data-go="topics"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h10"/></svg></span>Теми</button>
+    <button data-go="profile"><span class="nav-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg></span>Профіль</button>
+  </nav>
+  <main id="view" tabindex="-1"></main>
+</div>
+<div id="toasts" aria-live="polite"></div>
+<script>
+// База питань ПДР. Формат: { t: тема, q: питання, a: [правильна, ...неправильні], e: пояснення, r: пункт ПДР, s: знак (необов'язково) }
+// Перший варіант у масиві "a" завжди правильний — застосунок перемішує варіанти під час показу.
+window.PDR_TOPICS = {
+  general: "Обов'язки водія",
+  signals: "Світлофор і регулювальник",
+  warn: "Попереджувальні сигнали",
+  maneuver: "Маневрування",
+  speed: "Швидкість і дистанція",
+  overtake: "Обгін",
+  stop: "Зупинка і стоянка",
+  cross: "Перехрестя",
+  ped: "Пішоходи і маршрутні ТЗ",
+  light: "Світлові прилади",
+  rail: "Залізничні переїзди",
+  carry: "Перевезення і буксирування",
+  special: "Особливі умови руху",
+  tech: "Технічний стан",
+  signs: "Дорожні знаки",
+  safety: "Безпека і перша допомога"
+};
+
+window.PDR_QUESTIONS = [
+// ───────── Обов'язки водія ─────────
+{t:"general",q:"Які документи водій механічного транспортного засобу зобов'язаний мати при собі?",a:["Посвідчення водія відповідної категорії, реєстраційний документ на ТЗ і поліс обов'язкового страхування","Тільки посвідчення водія","Посвідчення водія та паспорт громадянина України","Посвідчення водія, техпаспорт і медичну довідку"],e:"Пункт 2.1 перелічує посвідчення водія відповідної категорії, реєстраційний документ на транспортний засіб і поліс (сертифікат) обов'язкового страхування цивільно-правової відповідальності.",r:"2.1"},
+{t:"general",q:"З якого віку може бути надано право керування автомобілями категорії B?",a:["З 18 років","З 16 років","З 17 років","З 19 років"],e:"Автомобілями категорій B1, B, C1, C (крім автобусів, трамваїв і тролейбусів) можна керувати з 18-річного віку.",r:"2.13"},
+{t:"general",q:"З якого віку може бути надано право керування мопедами та мотоциклами (категорії A1, A)?",a:["З 16 років","З 14 років","З 17 років","З 18 років"],e:"Мототранспортними засобами і мотоколясками (категорії A1, A) — з 16-річного віку.",r:"2.13"},
+{t:"general",q:"З якого віку може бути надано право керування автобусами (категорії D1, D)?",a:["З 21 року","З 18 років","З 19 років","З 23 років"],e:"Автобусами, трамваями і тролейбусами (D1, D, D1E, DE, T) — з 21-річного віку.",r:"2.13"},
+{t:"general",q:"З якого віку може бути надано право керування автомобілем з важким причепом (категорія BE)?",a:["З 19 років","З 18 років","З 20 років","З 21 року"],e:"Составами з причепами або напівпричепами (BE, C1E, CE) — з 19-річного віку.",r:"2.13"},
+{t:"general",q:"Які автомобілі належать до категорії B?",a:["Дозволена максимальна маса не більше 3500 кг, місць для сидіння (крім водія) не більше восьми","Дозволена максимальна маса не більше 3500 кг, місць для сидіння не більше шістнадцяти","Дозволена максимальна маса не більше 7500 кг","Усі легкові автомобілі незалежно від маси"],e:"Категорія B — автомобілі масою до 3500 кг з кількістю місць для сидіння, крім сидіння водія, не більше восьми.",r:"2.13"},
+{t:"general",q:"Причіп якої повної маси можна буксирувати, маючи лише категорію B?",a:["Не більше 750 кг","Не більше 500 кг","Не більше 1000 кг","Не більше 3500 кг"],e:"До категорії B входить состав з тягачем категорії B та причепом, повна маса якого не перевищує 750 кг. Важчий причіп потребує категорії BE.",r:"2.13"},
+{t:"general",q:"Чи можна водієві під час руху розмовляти по телефону?",a:["Так, якщо не тримати засіб зв'язку в руці (гарнітура, гучний зв'язок)","Ні, будь-яке користування телефоном заборонено","Так, тільки в населених пунктах","Так, якщо швидкість не перевищує 20 км/год"],e:"Пункт 2.9 «д» забороняє користуватися засобами зв'язку, тримаючи їх у руці. Розмова через гарнітуру або гучний зв'язок не заборонена.",r:"2.9"},
+{t:"general",q:"Кому дозволено не пристібатися ременем безпеки під час руху в населеному пункті?",a:["Водіям і пасажирам таксі","Пасажирам на задніх сидіннях","Водієві зі стажем понад 10 років","Усім, якщо швидкість менше 50 км/год"],e:"У населених пунктах можна не пристібатися водіям-інвалідам, водіям і пасажирам оперативних, спеціальних транспортних засобів і таксі.",r:"2.3"},
+{t:"general",q:"Кому дозволено не пристібатися ременем безпеки поза населеним пунктом?",a:["Особі, яка навчає водінню, якщо за кермом учень","Водіям і пасажирам таксі","Пасажирам на задньому сидінні","Нікому без винятку"],e:"Поза населеними пунктами виняток діє лише для особи, яка навчає водінню, коли за кермом учень. Виняток для таксі діє тільки в населених пунктах.",r:"2.3"},
+{t:"general",q:"Що зобов'язаний мати водій мотоцикла під час руху?",a:["Застебнутий мотошолом; пасажира без застебнутого мотошолома перевозити не можна","Тільки світлоповертальний жилет","Мотошолом лише поза населеним пунктом","Мотошолом лише для пасажира"],e:"Під час руху на мотоциклі і мопеді водій повинен бути в застебнутому мотошоломі й не перевозити пасажирів без застебнутих мотошоломів.",r:"2.3"},
+{t:"general",q:"Чи можна керувати автомобілем після прийому ліків, що знижують швидкість реакції і увагу?",a:["Ні, це заборонено","Так, якщо є рецепт лікаря","Так, у світлу пору доби","Так, якщо поруч є пасажир з посвідченням водія"],e:"Пункт 2.9 «б» забороняє керувати під впливом лікарських препаратів, що знижують швидкість реакції і увагу, а також у хворобливому стані чи у стані стомлення.",r:"2.9"},
+{t:"general",q:"За якого показника газоаналізатора водія визнають таким, що перебуває у стані алкогольного сп'яніння?",a:["0,2 проміле і більше","0,5 проміле і більше","0,8 проміле і більше","Будь-який показник понад 0,0 проміле"],e:"За Інструкцією про виявлення ознак сп'яніння стан алкогольного сп'яніння встановлюється при 0,2 ‰ і більше. Керувати в стані сп'яніння забороняє пункт 2.9 «а».",r:"2.9"},
+{t:"general",q:"Що водій, причетний до ДТП, повинен зробити насамперед?",a:["Негайно зупинитися, увімкнути аварійну сигналізацію і встановити знак аварійної зупинки","Відігнати автомобіль з проїзної частини, щоб не заважати руху","Поїхати до найближчого відділу поліції","Сфотографувати місце пригоди і продовжити рух"],e:"Пункт 2.10 вимагає негайно зупинити ТЗ і залишатися на місці, увімкнути аварійну сигналізацію, встановити знак аварійної зупинки та не переміщати ТЗ і предмети, причетні до пригоди.",r:"2.10"},
+{t:"general",q:"Що забороняється водієві, причетному до ДТП, до проведення медичного огляду?",a:["Вживати алкоголь, наркотики та ліки на їх основі (крім препаратів з офіційної аптечки) без призначення медпрацівника","Розмовляти з іншими учасниками пригоди","Вимикати двигун","Телефонувати родичам"],e:"Пункт 2.10 «є»: до медичного огляду не вживати без призначення медичного працівника алкоголю, наркотиків, а також лікарських препаратів на їх основі, крім тих, що входять до складу аптечки.",r:"2.10"},
+{t:"general",q:"З якої відстані мають чітко читатися символи номерного знака?",a:["20 м","10 м","30 м","50 м"],e:"Заборонено керувати ТЗ з номерним знаком, закритим або забрудненим так, що символи не можна чітко визначити з відстані 20 м.",r:"2.9"},
+{t:"general",q:"Чи можна передати керування автомобілем особі, яка не має при собі посвідчення водія?",a:["Ні, крім навчання водінню відповідно до розділу 24 ПДР","Так, якщо власник сидить поруч","Так, на ділянці дороги без інтенсивного руху","Так, якщо особа старша 18 років"],e:"Пункт 2.9 «ґ» забороняє це, за винятком навчальної їзди за правилами розділу 24.",r:"2.9"},
+{t:"general",q:"ДТП без потерпілих, обидва авто застраховані, водії згодні щодо обставин і тверезі. Як можна оформити пригоду?",a:["Скласти спільне повідомлення про ДТП (європротокол) без виклику поліції","Лише викликати поліцію і чекати її прибуття","Просто роз'їхатися без жодних документів","Обов'язково звернутися до суду"],e:"Пункт 2.11 дозволяє в такому разі скласти спільне повідомлення за зразком Моторного (транспортного) страхового бюро.",r:"2.11"},
+{t:"general",q:"Коли водій повинен перевірити технічно справний стан і комплектність транспортного засобу?",a:["Перед виїздом","Раз на рік під час техогляду","Тільки після ДТП","Лише перед далекою поїздкою"],e:"Пункт 2.3 «а»: перед виїздом перевірити і забезпечити технічно справний стан і комплектність ТЗ та правильність розміщення вантажу.",r:"2.3"},
+
+// ───────── Світлофор і регулювальник ─────────
+{t:"signals",q:"Що означає зелений миготливий сигнал світлофора?",a:["Дозволяє рух і інформує, що скоро ввімкнеться заборонний сигнал","Забороняє рух","Означає, що світлофор несправний","Дозволяє рух лише праворуч"],e:"Зелений миготливий сигнал дозволяє рух, але попереджає про швидку зміну сигналу на заборонний.",r:"8"},
+{t:"signals",q:"Що означає жовтий сигнал світлофора?",a:["Забороняє рух і попереджає про наступну зміну сигналів","Дозволяє рух, якщо встигаєш проїхати","Означає, що перехрестя нерегульоване","Дозволяє рух лише прямо"],e:"Жовтий сигнал забороняє рух. Водій, який не може зупинитися без екстреного гальмування, може продовжити рух з дотриманням безпеки.",r:"8"},
+{t:"signals",q:"Світлофор працює в режимі жовтого миготливого сигналу, регулювальника немає. Як проїжджати перехрестя?",a:["Як нерегульоване, керуючись знаками пріоритету","Як регульоване із забороною руху","Тільки після зупинки біля стоп-лінії на 5 секунд","Маючи перевагу перед усіма, хто наближається зліва"],e:"Пункт 16.1: якщо світлофор вимкнений або працює в режимі жовтого миготливого сигналу, перехрестя вважається нерегульованим.",r:"16.1"},
+{t:"signals",q:"Що означає одночасне ввімкнення червоного і жовтого сигналів?",a:["Забороняє рух і інформує про наступне ввімкнення зеленого","Дозволяє рух з обережністю","Світлофор несправний, перехрестя нерегульоване","Дозволяє рух лише громадському транспорту"],e:"Червоний разом із жовтим ще забороняє рух. Він лише попереджає, що зараз увімкнеться зелений.",r:"8"},
+{t:"signals",q:"Регулювальник стоїть з руками, витягнутими в сторони. Ви наближаєтеся до нього з лівого боку. Що вам дозволено?",a:["Рух прямо і праворуч","Рух в усіх напрямках","Тільки поворот праворуч","Рух заборонено"],e:"Руки витягнуті в сторони або опущені: з лівого і правого боку дозволено рух трамваю прямо, нерейковим ТЗ — прямо і праворуч.",r:"8"},
+{t:"signals",q:"Регулювальник стоїть з руками, витягнутими в сторони, і ви бачите його груди. Що вам дозволено?",a:["Рух заборонено","Рух прямо і праворуч","Тільки поворот ліворуч","Рух в усіх напрямках"],e:"З боку грудей і спини регулювальника при витягнутих у сторони руках рух усіх транспортних засобів заборонено.",r:"8"},
+{t:"signals",q:"Права рука регулювальника витягнута вперед. Ви наближаєтеся з лівого боку від нього. Що вам дозволено?",a:["Рух в усіх напрямках","Тільки праворуч","Рух заборонено","Тільки прямо"],e:"Коли права рука витягнута вперед, з лівого боку регулювальника нерейковим ТЗ дозволено рух в усіх напрямках.",r:"8"},
+{t:"signals",q:"Права рука регулювальника витягнута вперед. Ви бачите його груди. Куди можна рухатися?",a:["Тільки праворуч","Прямо і праворуч","В усіх напрямках","Рух заборонено"],e:"З боку грудей при витягнутій уперед правій руці всім нерейковим ТЗ дозволено рух тільки праворуч.",r:"8"},
+{t:"signals",q:"Регулювальник підняв руку вгору. Що це означає?",a:["Рух усіх учасників заборонено в усіх напрямках","Увага, зараз зміниться сигнал на дозвільний","Рух дозволено лише пішоходам","Рух дозволено лише прямо"],e:"Піднята вгору рука забороняє рух усім. Водії, які не можуть зупинитися без екстреного гальмування, можуть продовжити рух.",r:"8"},
+{t:"signals",q:"Сигнали регулювальника суперечать сигналам світлофора. Чим керуватися?",a:["Сигналами регулювальника","Сигналами світлофора","Знаками пріоритету","Правилом правої руки"],e:"Сигнали регулювальника мають перевагу над сигналами світлофора і вимогами знаків пріоритету.",r:"8"},
+{t:"signals",q:"Чи діють знаки пріоритету на перехресті, де працює світлофор у звичайному режимі?",a:["Ні, не діють","Так, діють завжди","Діють лише для поворотів ліворуч","Діють тільки вночі"],e:"Пункт 16.1: на регульованому перехресті знаки пріоритету не діють.",r:"16.1"},
+{t:"signals",q:"Горить червоний сигнал і ввімкнена зелена стрілка праворуч у додатковій секції. Що потрібно зробити?",a:["Можна повернути праворуч, давши дорогу ТЗ з інших напрямків","Чекати основного зеленого сигналу","Повернути праворуч, маючи перевагу над усіма","Можна рухатися прямо і праворуч"],e:"Пункт 16.9: рухаючись за стрілкою, увімкненою разом із червоним чи жовтим, водій має дати дорогу ТЗ, що рухаються з інших напрямків.",r:"16.9"},
+{t:"signals",q:"Що вимагає зелена стрілка на табличці, встановленій на рівні червоного сигналу?",a:["Зайняти крайню праву (ліву) смугу і дати дорогу ТЗ та пішоходам з інших напрямків","Рухатися в напрямку стрілки без обмежень","Зупинитися і чекати зеленого","Рухатися тільки громадському транспорту"],e:"Пункт 16.9: під час руху за зеленою стрілкою на табличці водій повинен зайняти крайню смугу і дати дорогу всім іншим учасникам.",r:"16.9"},
+{t:"signals",q:"Ви виїхали на перехрестя на зелений сигнал, стоп-лінії та знака 5.62 перед наступним світлофором немає. Що робити?",a:["Виїхати в наміченому напрямку незалежно від сигналів світлофора на виїзді","Зупинитися перед світлофором на виїзді, якщо там червоний","Повернутися на попередню смугу","Увімкнути аварійну сигналізацію і чекати"],e:"Пункт 16.8: водій, який виїхав на перехрестя на дозвільний сигнал, виїжджає з нього в наміченому напрямку.",r:"16.8"},
+{t:"signals",q:"Горить зелений, але за перехрестям утворився затор. Чи можна виїжджати на перехрестя?",a:["Ні, якщо доведеться зупинитися на перехресті й заважати іншим","Так, адже горить зелений","Так, якщо увімкнути аварійну сигналізацію","Так, на будь-яке перехрестя"],e:"Пункт 16.4 забороняє виїжджати на перехрестя навіть на зелений, якщо затор змусить зупинитися на ньому.",r:"16.4"},
+
+// ───────── Попереджувальні сигнали ─────────
+{t:"warn",q:"На якій відстані від автомобіля потрібно встановити знак аварійної зупинки в населеному пункті?",a:["Не ближче 20 м","Не ближче 10 м","Не ближче 15 м","Не ближче 40 м"],e:"У населених пунктах знак аварійної зупинки встановлюється не ближче 20 м від ТЗ, поза ними — не ближче 40 м.",r:"9"},
+{t:"warn",q:"На якій відстані від автомобіля потрібно встановити знак аварійної зупинки поза населеним пунктом?",a:["Не ближче 40 м","Не ближче 20 м","Не ближче 30 м","Не ближче 100 м"],e:"Поза населеними пунктами — не ближче 40 м від транспортного засобу.",r:"9"},
+{t:"warn",q:"Водій підняв руку вгору. Про що він сигналізує?",a:["Про гальмування","Про поворот ліворуч","Про поворот праворуч","Про початок обгону"],e:"Сигнал гальмування подається лівою або правою рукою, піднятою вгору.",r:"9"},
+{t:"warn",q:"Водій витягнув праву руку в бік і зігнув її в лікті під прямим кутом угору. Що це означає?",a:["Поворот ліворуч","Поворот праворуч","Гальмування","Зупинку"],e:"Лівий поворот: ліва рука, витягнута в бік, або права, витягнута в бік і зігнута в лікті під прямим кутом угору.",r:"9"},
+{t:"warn",q:"Водій витягнув ліву руку в бік. Що це означає?",a:["Поворот або перестроювання ліворуч","Поворот праворуч","Гальмування","Дозвіл на обгін"],e:"Ліва рука, витягнута в бік, означає поворот (перестроювання) ліворуч.",r:"9"},
+{t:"warn",q:"Коли треба подавати сигнал повороту в населеному пункті?",a:["Заздалегідь, за 50–100 м до початку маневру","Одночасно з початком маневру","За 5 м до маневру","Лише якщо позаду є інші ТЗ"],e:"Сигнал подається заздалегідь до початку маневру: у населених пунктах за 50–100 м, поза ними — за 150–200 м. Сигнал не дає переваги.",r:"9"},
+{t:"warn",q:"У якому випадку потрібно ввімкнути аварійну сигналізацію?",a:["У разі дорожньо-транспортної пригоди","Під час стоянки в дозволеному місці","Щоб подякувати іншому водієві","Під час обгону"],e:"Аварійна сигналізація вмикається, зокрема, у разі ДТП, вимушеної зупинки, засліплення світлом фар, на буксированому ТЗ.",r:"9"},
+{t:"warn",q:"Чи можна подавати звуковий сигнал у населеному пункті?",a:["Лише коли без цього неможливо запобігти ДТП","Так, у будь-який час","Так, щоб попередити про обгін","Ні, ніколи"],e:"У населених пунктах звукові сигнали заборонені, крім випадків, коли без них неможливо запобігти пригоді.",r:"9"},
+{t:"warn",q:"Вас засліпило світлом фар зустрічного автомобіля. Що потрібно зробити?",a:["Не змінюючи смуги, увімкнути аварійну сигналізацію і зменшити швидкість аж до зупинки","Блимнути дальнім світлом у відповідь","Різко звернути на узбіччя","Збільшити швидкість, щоб швидше роз'їхатися"],e:"У разі засліплення водій має, не змінюючи смуги руху, увімкнути аварійну сигналізацію і зменшити швидкість аж до зупинки.",r:"19"},
+
+// ───────── Маневрування ─────────
+{t:"maneuver",q:"Ви виїжджаєте на дорогу з прилеглої території (двір, АЗС). Кому треба дати дорогу?",a:["Пішоходам і транспортним засобам, що рухаються по ній","Лише транспортним засобам ліворуч","Нікому, якщо ввімкнено покажчик повороту","Тільки громадському транспорту"],e:"Виїжджаючи з прилеглої території, водій повинен дати дорогу пішоходам і транспортним засобам, які рухаються по дорозі.",r:"10"},
+{t:"maneuver",q:"Два автомобілі одночасно перестроюються в одну смугу. Хто має дати дорогу?",a:["Водій, у якого інший автомобіль праворуч","Водій, у якого інший автомобіль ліворуч","Той, хто має меншу швидкість","Той, хто пізніше ввімкнув покажчик"],e:"Розділ 10 ПДР: при одночасному перестроюванні водій повинен дати дорогу транспортному засобу, що знаходиться праворуч.",r:"10"},
+{t:"maneuver",q:"З якого положення на проїзній частині виконується поворот праворуч?",a:["З крайнього правого положення","З будь-якої смуги","З середньої смуги","З крайнього лівого положення"],e:"Перед поворотом праворуч водій займає крайнє праве положення, перед поворотом ліворуч — крайнє ліве (за винятками з розділу 10).",r:"10"},
+{t:"maneuver",q:"Ближче якої відстані від залізничного переїзду заборонено розворот?",a:["50 м","10 м","100 м","20 м"],e:"Розворот заборонено ближче 50 м від залізничних переїздів.",r:"10"},
+{t:"maneuver",q:"За якої видимості дороги заборонено розворот?",a:["Менше 100 м хоча б в одному напрямку","Менше 50 м в обох напрямках","Менше 300 м","Видимість не впливає на розворот"],e:"Розворот заборонено в місцях, де видимість дороги хоча б в одному напрямку менше 100 м.",r:"10"},
+{t:"maneuver",q:"Де заборонено розворот?",a:["На мосту","На перехресті, де немає знаків, що його забороняють","На дорозі з переривчастою розміткою","На широкій дорозі поза населеним пунктом з хорошою видимістю"],e:"Розворот заборонено, зокрема, на пішохідних переходах, мостах, естакадах, у тунелях і під ними.",r:"10"},
+{t:"maneuver",q:"Де заборонено рух заднім ходом?",a:["На перехрестях","На прилеглій території","Під час паркування біля тротуару","На стоянці біля магазину"],e:"Рух заднім ходом заборонено на перехрестях, пішохідних переходах, мостах, у тунелях, на в'їздах і виїздах з них, на залізничних переїздах і в місцях з обмеженою оглядовістю.",r:"10"},
+{t:"maneuver",q:"Яке правило розташування на дорозі діє в Україні?",a:["Правосторонній рух: ТЗ рухаються якомога ближче до правого краю проїзної частини","Лівосторонній рух","Можна рухатися будь-якою смугою на свій розсуд","Правий край призначений лише для вантажівок"],e:"В Україні правосторонній рух, і водії мають рухатися якомога ближче до правого краю проїзної частини.",r:"11"},
+
+// ───────── Швидкість і дистанція ─────────
+{t:"speed",q:"Яка максимальна швидкість дозволена в населених пунктах?",a:["50 км/год","40 км/год","60 км/год","70 км/год"],e:"З 1 січня 2018 року в населених пунктах дозволено рух зі швидкістю не більше 50 км/год.",r:"12.4"},
+{t:"speed",q:"Яка максимальна швидкість у житловій і пішохідній зоні?",a:["20 км/год","10 км/год","30 км/год","40 км/год"],e:"У житлових і пішохідних зонах швидкість не повинна перевищувати 20 км/год.",r:"12.5"},
+{t:"speed",q:"З якою максимальною швидкістю дозволено буксирування?",a:["50 км/год","30 км/год","60 км/год","70 км/год"],e:"Під час буксирування швидкість не повинна перевищувати 50 км/год.",r:"12.7"},
+{t:"speed",q:"Яка максимальна швидкість легкового автомобіля поза населеним пунктом на звичайній дорозі (водій зі стажем понад 2 роки)?",a:["90 км/год","80 км/год","110 км/год","130 км/год"],e:"На інших автомобільних дорогах поза населеними пунктами — не більше 90 км/год.",r:"12.6"},
+{t:"speed",q:"Яка максимальна швидкість легкового автомобіля на автомагістралі (знак 5.1)?",a:["130 км/год","110 км/год","120 км/год","150 км/год"],e:"На дорозі, позначеній знаком 5.1 «Автомагістраль», — не більше 130 км/год.",r:"12.6"},
+{t:"speed",q:"Яка максимальна швидкість легкового автомобіля на дорозі з окремими проїзними частинами, відокремленими розділювальною смугою?",a:["110 км/год","90 км/год","100 км/год","130 км/год"],e:"На дорозі з окремими проїзними частинами, відокремленими розділювальною смугою, — не більше 110 км/год.",r:"12.6"},
+{t:"speed",q:"З якою максимальною швидкістю може рухатися поза населеним пунктом водій зі стажем до 2 років?",a:["70 км/год","60 км/год","80 км/год","90 км/год"],e:"Транспортним засобам, якими керують водії зі стажем до 2 років, — не більше 70 км/год, навіть на автомагістралі.",r:"12.6"},
+{t:"speed",q:"Яка максимальна швидкість легкового автомобіля з причепом поза населеним пунктом?",a:["80 км/год","70 км/год","90 км/год","110 км/год"],e:"Легковим автомобілям з причепом і мотоциклам поза населеними пунктами — не більше 80 км/год.",r:"12.6"},
+{t:"speed",q:"Яка максимальна швидкість мотоцикла поза населеним пунктом?",a:["80 км/год","60 км/год","90 км/год","110 км/год"],e:"Мотоциклам поза населеними пунктами — не більше 80 км/год.",r:"12.6"},
+{t:"speed",q:"Яка максимальна швидкість автобуса, що перевозить організовану групу дітей, поза населеним пунктом?",a:["80 км/год","60 км/год","70 км/год","90 км/год"],e:"Автобусам (мікроавтобусам), що перевозять організовані групи дітей, — не більше 80 км/год.",r:"12.6"},
+{t:"speed",q:"Яка максимальна швидкість вантажного автомобіля, що перевозить людей у кузові?",a:["60 км/год","50 км/год","70 км/год","80 км/год"],e:"Вантажним автомобілям, що перевозять людей у кузові, та мопедам — не більше 60 км/год.",r:"12.6"},
+{t:"speed",q:"Яка максимальна швидкість автобуса (не мікроавтобуса) поза населеним пунктом?",a:["90 км/год","80 км/год","100 км/год","110 км/год"],e:"Автобусам, за винятком мікроавтобусів, — не більше 90 км/год.",r:"12.6"},
+{t:"speed",q:"Ви в'їхали в населений пункт, позначений знаком з назвою на синьому фоні (5.47). Яка максимальна швидкість легкового автомобіля на звичайній дорозі?",a:["90 км/год, як поза населеним пунктом","50 км/год","60 км/год","70 км/год"],e:"Пункт 12.6 діє і на дорогах, що проходять через населені пункти, позначені знаком 5.47. Там застосовуються обмеження для доріг поза населеними пунктами.",r:"12.6"},
+{t:"speed",q:"Якою має бути швидкість у темну пору доби та в умовах недостатньої видимості?",a:["Такою, щоб водій міг зупинитися в межах видимості дороги","Не більше 40 км/год","На 20 км/год меншою за дозволену","Такою самою, як удень"],e:"Пункт 12.2: швидкість повинна дозволяти зупинити ТЗ у межах видимості дороги.",r:"12.2"},
+{t:"speed",q:"Попереду виникла перешкода, яку ви можете виявити. Що потрібно зробити?",a:["Негайно зменшити швидкість аж до зупинки або безпечно об'їхати перешкоду","Подати звуковий сигнал і продовжити рух","Різко змінити смугу без гальмування","Увімкнути дальнє світло"],e:"Пункт 12.3 вимагає негайно вжити заходів для зменшення швидкості аж до зупинки або безпечного об'їзду перешкоди.",r:"12.3"},
+{t:"speed",q:"Коли водієві дозволено різко гальмувати?",a:["Лише коли без цього неможливо запобігти ДТП","Перед кожним пішохідним переходом","Щоб попередити водія позаду про небезпеку","Будь-коли на сухій дорозі"],e:"Пункт 12.9 «г» забороняє різке гальмування, крім випадків, коли без нього неможливо запобігти пригоді.",r:"12.9"},
+{t:"speed",q:"Чи можна рухатися без потреби з дуже малою швидкістю?",a:["Ні, якщо це перешкоджає іншим транспортним засобам","Так, мінімальної швидкості не існує","Так, у крайній лівій смузі","Так, за умови ввімкненої аварійної сигналізації"],e:"Пункт 12.9 «в» забороняє перешкоджати іншим ТЗ, рухаючись без потреби з дуже малою швидкістю.",r:"12.9"},
+{t:"speed",q:"У яких випадках обмеження швидкості вводять тимчасово (знаки на жовтому фоні)?",a:["У місцях дорожніх робіт, масових заходів і у разі стихійних (погодних) явищ","Біля кожної школи","На всіх мостах","Біля стаціонарних постів поліції"],e:"Пункт 12.10-1: тимчасові обмеження вводяться виключно для дорожніх робіт, масових або спеціальних заходів і стихійних явищ.",r:"12.10-1"},
+{t:"speed",q:"Як зміниться гальмівний шлях, якщо швидкість збільшити вдвічі?",a:["Збільшиться приблизно вчетверо","Збільшиться вдвічі","Не зміниться","Збільшиться на 10–20%"],e:"Гальмівний шлях пропорційний квадрату швидкості, тому при подвоєнні швидкості він зростає приблизно в чотири рази.",r:"Безпека"},
+{t:"speed",q:"Як правильно обрати дистанцію до транспортного засобу попереду?",a:["Таку, щоб уникнути зіткнення в разі його раптового гальмування","Не менше 10 м за будь-яких умов","Таку, щоб бачити його номерний знак","Мінімальну, щоб ніхто не перестроївся"],e:"Пункт 13.1: водій повинен тримати безпечну дистанцію, щоб у разі гальмування переднього ТЗ уникнути зіткнення.",r:"13.1"},
+
+// ───────── Обгін ─────────
+{t:"overtake",q:"Чи дозволено обгін на перехресті?",a:["Ні, заборонено","Так, на регульованому","Так, якщо ви на головній дорозі","Так, у світлу пору доби"],e:"Пункт 14.6 «а»: обгін на перехресті заборонено.",r:"14.6"},
+{t:"overtake",q:"Ближче якої відстані до залізничного переїзду заборонено обгін?",a:["100 м","50 м","30 м","150 м"],e:"Обгін заборонено на залізничних переїздах і ближче ніж за 100 м перед ними.",r:"14.6"},
+{t:"overtake",q:"Ближче якої відстані до пішохідного переходу в населеному пункті заборонено обгін?",a:["50 м","20 м","100 м","10 м"],e:"Ближче ніж за 50 м перед пішохідним переходом у населеному пункті й 100 м — поза ним.",r:"14.6"},
+{t:"overtake",q:"Ближче якої відстані до пішохідного переходу поза населеним пунктом заборонено обгін?",a:["100 м","50 м","150 м","200 м"],e:"Поза населеним пунктом обгін заборонено ближче ніж за 100 м перед пішохідним переходом.",r:"14.6"},
+{t:"overtake",q:"Чи можна обганяти транспортний засіб, який сам виконує обгін?",a:["Ні, заборонено","Так, якщо зустрічна смуга вільна","Так, поза населеним пунктом","Так, з увімкненим покажчиком повороту"],e:"Пункт 14.6 «ґ»: заборонено обганяти ТЗ, який здійснює обгін або об'їзд.",r:"14.6"},
+{t:"overtake",q:"Де заборонено обгін?",a:["У тунелі","На прямій ділянці з хорошою видимістю","На дорозі з переривчастою розміткою","Поза населеним пунктом"],e:"Обгін заборонено, зокрема, в тунелях, на мостах, естакадах, крутих поворотах і в кінці підйому.",r:"14.6"},
+{t:"overtake",q:"Чи можна виконувати обгін (з виїздом на зустрічну смугу) на дорозі, що має дві смуги для руху в одному напрямку?",a:["Ні, заборонено","Так, якщо зустрічна смуга вільна","Так, поза населеним пунктом","Так, вдень"],e:"Пункт 14.6 «е»: обгін заборонено на дорогах, що мають дві і більше смуги для руху в одному напрямку.",r:"14.6"},
+{t:"overtake",q:"Вас обганяють. Що забороняється робити?",a:["Перешкоджати обгону, підвищуючи швидкість або іншими діями","Утримуватися на своїй смузі","Рухатися з незмінною швидкістю","Зміщуватися праворуч"],e:"Пункт 14.3 забороняє водію, якого обганяють, перешкоджати обгону.",r:"14.3"},
+{t:"overtake",q:"Коли не можна розпочинати обгін?",a:["Коли водій попереду по тій самій смузі подав сигнал повороту ліворуч","Коли водій попереду рухається повільно","Коли позаду немає транспортних засобів","Коли зустрічна смуга вільна на достатній відстані"],e:"Пункт 14.2 «б»: перед обгоном треба переконатися, що водій попереду не подав сигналу про поворот ліворуч.",r:"14.2"},
+{t:"overtake",q:"Що має робити водій тихохідного ТЗ поза населеним пунктом, якщо інші не можуть його обігнати?",a:["Рухатися якомога правіше, а за потреби зупинитися на узбіччі й пропустити інших","Збільшити швидкість","Увімкнути аварійну сигналізацію та продовжити рух посередині","Нічого, це проблема водіїв позаду"],e:"Пункт 14.4 вимагає рухатися якомога правіше та за потреби зупинитися на узбіччі, щоб пропустити ТЗ позаду.",r:"14.4"},
+{t:"overtake",q:"Чи можна обганяти колону, позаду якої рухається автомобіль з увімкненим синім проблисковим маячком?",a:["Ні, заборонено","Так, якщо колона рухається повільно","Так, поза населеним пунктом","Так, з увімкненим ближнім світлом"],e:"Пункт 14.6 «є»: заборонено обганяти колону, позаду якої рухається ТЗ з увімкненим проблисковим маячком (крім оранжевого).",r:"14.6"},
+{t:"overtake",q:"Чи можна залишитися на зустрічній смузі після обгону?",a:["Так, якщо одразу доведеться знову обганяти і це не створить небезпеки","Ні, ніколи","Так, завжди, якщо там вільно","Так, лише на автомагістралі"],e:"Пункт 14.5 дозволяє це, якщо після повернення довелося б знову розпочинати обгін і немає небезпеки для зустрічних і перешкод для тих, хто позаду.",r:"14.5"},
+
+// ───────── Зупинка і стоянка ─────────
+{t:"stop",q:"Ближче якої відстані від пішохідного переходу заборонено зупинку?",a:["10 м з обох боків","5 м","15 м тільки перед переходом","20 м"],e:"Пункт 15.9 «г»: зупинка заборонена на пішохідних переходах і ближче 10 м від них з обох боків.",r:"15.9"},
+{t:"stop",q:"Ближче якої відстані від посадкового майданчика зупинки маршрутних ТЗ заборонено зупинку?",a:["30 м","10 м","15 м","50 м"],e:"Пункт 15.9 «е»: ближче 30 м від посадкових майданчиків, а якщо їх немає — від знака зупинки, з обох боків.",r:"15.9"},
+{t:"stop",q:"Ближче якої відстані від залізничного переїзду заборонено стоянку?",a:["50 м","20 м","30 м","100 м"],e:"Пункт 15.10 «г»: стоянку заборонено ближче 50 м від залізничних переїздів.",r:"15.10"},
+{t:"stop",q:"Де заборонено зупинку на перехресті без пішохідного переходу?",a:["На перехресті та ближче 10 м від краю перехрещуваної проїзної частини","Лише в межах самого перехрестя","Ближче 30 м від перехрестя","Зупинка на перехрестях дозволена"],e:"Пункт 15.9 «ґ»: зупинку заборонено на перехресті й ближче 10 м від краю перехрещуваної проїзної частини, крім зупинки для надання переваги.",r:"15.9"},
+{t:"stop",q:"Якщо між автомобілем, що зупинився, і суцільною лінією розмітки менше скількох метрів, зупинку заборонено?",a:["3 м","2 м","5 м","1 м"],e:"Пункт 15.9 «д»: зупинка заборонена там, де відстань до суцільної лінії, розділювальної смуги чи протилежного краю проїзної частини менше 3 м.",r:"15.9"},
+{t:"stop",q:"Чи можна ставити автомобіль на газоні?",a:["Ні, стоянка на газонах заборонена","Так, якщо немає знака заборони","Так, у дворі житлового будинку","Так, на ніч"],e:"Пункт 15.10 «є»: стоянка на газонах заборонена.",r:"15.10"},
+{t:"stop",q:"Чи можна ставити легкові автомобілі на проїзній частині у два ряди?",a:["Ні, не дозволяється","Так, на короткий час","Так, увімкнувши аварійну сигналізацію","Так, у вихідні дні"],e:"Пункт 15.4: ТЗ не дозволяється ставити на проїзній частині в два і більше ряди. Велосипеди, мопеди і мотоцикли без причепа — не більше ніж у два ряди.",r:"15.4"},
+{t:"stop",q:"Коли в населеному пункті дозволена зупинка на лівому боці дороги?",a:["На дорозі з однією смугою в кожному напрямку без трамвайних колій посередині й без розмітки 1.1, а також на дорозі з одностороннім рухом","На будь-якій дорозі, якщо немає знаків","Тільки на автомагістралі","Ніколи"],e:"Пункт 15.3 дозволяє зупинку і стоянку на лівому боці в цих двох випадках.",r:"15.3"},
+{t:"stop",q:"Де заборонено зупинку?",a:["Під мостом","На узбіччі поза населеним пунктом","У спеціально відведеному місці","Біля правого краю дороги з одностороннім рухом"],e:"Пункт 15.9 «в»: зупинку заборонено на естакадах, мостах, шляхопроводах і під ними, а також у тунелях.",r:"15.9"},
+{t:"stop",q:"Де дозволена стоянка поза населеним пунктом у темну пору доби?",a:["Лише на майданчиках для стоянки або за межами дороги","На узбіччі з увімкненими габаритними вогнями","На проїзній частині біля правого краю","Будь-де, де немає знаків заборони"],e:"Пункт 15.11: у темну пору доби та в умовах недостатньої видимості стоянка поза населеними пунктами дозволена лише на майданчиках або за межами дороги.",r:"15.11"},
+{t:"stop",q:"Як ставити автомобіль під кутом до краю проїзної частини біля тротуару на підйомі?",a:["Тільки задньою частиною до тротуару","Тільки передньою частиною","Будь-як","Під кутом ставити заборонено"],e:"Пункт 15.5: біля тротуарів — лише передньою частиною, а на підйомах — тільки задньою.",r:"15.5"},
+{t:"stop",q:"Ближче якої відстані від виїзду з прилеглої території заборонено зупинку?",a:["10 м","5 м","20 м","30 м"],e:"Пункт 15.9 «и»: зупинку заборонено ближче 10 м від виїздів з прилеглих територій і безпосередньо в місці виїзду.",r:"15.9"},
+{t:"stop",q:"Ближче якої відстані від контейнерів для побутових відходів заборонено стоянку?",a:["5 м","2 м","10 м","15 м"],e:"Пункт 15.10 «е»: стоянку заборонено ближче 5 м від контейнерних майданчиків і контейнерів для збирання побутових відходів.",r:"15.10"},
+{t:"stop",q:"Що вважається зупинкою?",a:["Припинення руху на час до 5 хв або більше, якщо це потрібно для посадки (висадки) пасажирів чи вантаження","Припинення руху на будь-який час","Припинення руху тільки з вимкненим двигуном","Припинення руху на час до 15 хв"],e:"Пункт 1.10: зупинка — припинення руху до 5 хв або довше для посадки/висадки чи вантаження. Довше — це вже стоянка.",r:"1.10"},
+{t:"stop",q:"Чи можна відчиняти двері автомобіля, якщо це створює перешкоду іншим учасникам руху?",a:["Ні, заборонено","Так, якщо швидко зачинити","Так, якщо ввімкнено аварійну сигналізацію","Так, лише праві двері"],e:"Пункт 15.13 забороняє відчиняти двері, залишати їх відчиненими й виходити, якщо це загрожує безпеці чи створює перешкоди.",r:"15.13"},
+
+// ───────── Перехрестя ─────────
+{t:"cross",q:"Ви рухаєтеся по другорядній дорозі. Кому потрібно дати дорогу на перехресті?",a:["Транспортним засобам, що наближаються по головній дорозі, незалежно від напрямку їх руху","Лише тим, хто їде по головній праворуч","Лише тим, хто повертає","Нікому, якщо ви рухаєтеся прямо"],e:"Пункт 16.11: на перехресті нерівнозначних доріг водій на другорядній дає дорогу всім на головній.",r:"16.11"},
+{t:"cross",q:"Перехрестя рівнозначних доріг. Кому потрібно дати дорогу?",a:["Нерейковим транспортним засобам, що наближаються праворуч","Тим, хто наближається ліворуч","Тим, хто рухається з більшою швидкістю","Вантажним автомобілям"],e:"Пункт 16.12: на перехресті рівнозначних доріг дорогу дають тим, хто наближається праворуч.",r:"16.12"},
+{t:"cross",q:"Трамвай і автомобіль наближаються до нерегульованого перехрестя по рівнозначних дорогах. Хто має перевагу?",a:["Трамвай, незалежно від напрямку свого руху","Автомобіль, якщо трамвай ліворуч","Той, хто наближається праворуч","Той, хто першим під'їхав"],e:"Пункт 16.12: на нерегульованому перехресті трамвай має перевагу перед нерейковими ТЗ на рівнозначній дорозі.",r:"16.12"},
+{t:"cross",q:"Ви повертаєте ліворуч на перехресті рівнозначних доріг. Кому потрібно дати дорогу?",a:["Трамваю попутного напрямку і зустрічним ТЗ, що рухаються прямо чи праворуч","Тільки зустрічним, які повертають ліворуч","Нікому, якщо ввімкнено покажчик","Тільки пішоходам"],e:"Пункт 16.13: перед поворотом ліворуч і розворотом треба дати дорогу трамваю попутного напрямку і зустрічним ТЗ прямо чи праворуч.",r:"16.13"},
+{t:"cross",q:"Головна дорога на перехресті змінює напрямок. Як роз'їжджаються між собою водії на головній дорозі?",a:["За правилами проїзду перехресть рівнозначних доріг","Перевагу має той, хто рухається прямо","Перевагу має більший транспортний засіб","Перевагу має той, хто повертає"],e:"Пункт 16.14: якщо головна дорога змінює напрямок, водії на ній керуються між собою правилами для рівнозначних доріг.",r:"16.14"},
+{t:"cross",q:"Неможливо визначити наявність покриття дороги (темно, бруд, сніг), знаків пріоритету немає. Як діяти?",a:["Вважати, що ви на другорядній дорозі","Вважати, що ви на головній дорозі","Вважати дороги рівнозначними","Проїжджати першим"],e:"Пункт 16.15: у такому разі водій повинен вважати, що перебуває на другорядній дорозі.",r:"16.15"},
+{t:"cross",q:"Повертаючи праворуч, кому водій повинен дати дорогу?",a:["Пішоходам, що переходять проїзну частину, на яку він повертає, і велосипедистам, що їдуть прямо в попутному напрямку","Лише транспортним засобам ліворуч","Нікому на регульованому перехресті","Лише громадському транспорту"],e:"Пункт 16.2: при повороті праворуч або ліворуч дають дорогу таким пішоходам і велосипедистам.",r:"16.2"},
+{t:"cross",q:"Увімкнувся зелений сигнал. Кому ви повинні дати дорогу?",a:["Транспортним засобам, що завершують рух через перехрестя, і пішоходам, що закінчують перехід","Нікому — зелений дає абсолютну перевагу","Лише трамваям","Лише тим, хто праворуч"],e:"Пункт 16.5: при ввімкненні дозвільного сигналу треба пропустити тих, хто завершує рух чи перехід.",r:"16.5"},
+{t:"cross",q:"Ви повертаєте ліворуч на зелений сигнал основного світлофора. Кому треба дати дорогу?",a:["Трамваю попутного напрямку та зустрічним ТЗ, що рухаються прямо або праворуч","Нікому — у вас зелений","Лише пішоходам","Лише тим, хто повертає ліворуч назустріч"],e:"Пункт 16.6 вимагає дати дорогу трамваю попутного напрямку та зустрічним, які їдуть прямо або праворуч.",r:"16.6"},
+{t:"cross",q:"Зелений сигнал одночасно дозволяє рух трамваю і автомобілям. Хто має перевагу?",a:["Трамвай, незалежно від напрямку його руху","Автомобіль, якщо рухається прямо","Той, хто наближається праворуч","Той, хто першим виїхав на перехрестя"],e:"Пункт 16.7: трамваю надається перевага незалежно від напрямку його руху.",r:"16.7"},
+{t:"cross",q:"Де потрібно зупинитися, щоб дати дорогу ТЗ на перехрещуваній дорозі, якщо є стоп-лінія 1.12?",a:["Перед стоп-лінією","За стоп-лінією, щоб краще бачити","На пішохідному переході","Будь-де перед перехрестям"],e:"Пункт 16.3: зупинитися перед розміткою 1.12 (стоп-лінією) або 1.13, а якщо їх немає — перед краєм перехрещуваної проїзної частини.",r:"16.3"},
+
+// ───────── Пішоходи і маршрутні ТЗ ─────────
+{t:"ped",q:"Ви наближаєтеся до нерегульованого пішохідного переходу, на якому є пішоходи. Що потрібно зробити?",a:["Зменшити швидкість, а за потреби зупинитися, щоб пропустити пішоходів","Подати звуковий сигнал і проїхати","Проїхати, якщо пішохід ще не дійшов до вашої смуги, не знижуючи швидкості","Об'їхати пішоходів з лівого боку"],e:"Розділ 18 ПДР: водій, що наближається до нерегульованого переходу, на якому є пішоходи, повинен знизити швидкість і за потреби зупинитися.",r:"18"},
+{t:"ped",q:"Перед нерегульованим пішохідним переходом у сусідній смузі зупинився автомобіль. Як діяти?",a:["Продовжувати рух лише переконавшись, що на переході немає пішоходів","Об'їхати його, не знижуючи швидкості","Подати звуковий сигнал і проїхати","Обігнати його по зустрічній смузі"],e:"Автомобіль у сусідній смузі може закривати пішохода. Рухатися далі можна, лише переконавшись, що пішоходів немає.",r:"18"},
+{t:"ped",q:"Проїжджу частину переходить пішохід з білою тростиною. Що повинен зробити водій?",a:["Зменшити швидкість, за потреби зупинитися і пропустити його","Подати звуковий сигнал","Об'їхати пішохода позаду","Продовжити рух, якщо пішохід не на переході"],e:"Водій повинен пропустити незрячого пішохода з білою тростиною, за потреби зупинившись.",r:"18"},
+{t:"ped",q:"Попереду стоїть автобус зі знаком «Діти» і ввімкненими оранжевими маячками. Що потрібно зробити?",a:["Зменшити швидкість, за потреби зупинитися і пропустити дітей","Об'їхати автобус, не змінюючи швидкості","Подати звуковий сигнал","Обігнати його по зустрічній смузі"],e:"Водій повинен пропустити дітей, які йдуть до транспортного засобу з розпізнавальним знаком «Діти» або від нього.",r:"18"},
+{t:"ped",q:"У населеному пункті маршрутний автобус починає рух від позначеної зупинки. Що потрібно зробити?",a:["Зменшити швидкість, а за потреби зупинитися, щоб дати йому розпочати рух","Продовжити рух — у вас перевага","Подати звуковий сигнал","Збільшити швидкість, щоб проїхати раніше"],e:"У населених пунктах водії повинні знизити швидкість і за потреби зупинитися, щоб маршрутні ТЗ могли рушити від позначеної зупинки.",r:"17"},
+{t:"ped",q:"Хто має перевагу в житловій зоні?",a:["Пішоходи, але вони не повинні безпідставно перешкоджати руху ТЗ","Транспортні засоби","Той, хто наближається праворуч","Велосипедисти"],e:"Розділ 26 ПДР: у житловій зоні пішоходи можуть рухатися і тротуарами, і проїзною частиною та мають перевагу, але не повинні безпідставно заважати.",r:"26"},
+
+// ───────── Світлові прилади ─────────
+{t:"light",q:"Коли поза населеними пунктами вдень мають бути ввімкнені денні ходові вогні або ближнє світло?",a:["З 1 жовтня по 1 травня","Цілий рік","З 1 листопада по 1 березня","Лише в туман і дощ"],e:"Розділ 19 ПДР: поза населеними пунктами у світлу пору доби з 1 жовтня по 1 травня на всіх ТЗ мають бути ввімкнені денні ходові вогні, а за їх відсутності — ближнє світло.",r:"19"},
+{t:"light",q:"За скільки метрів до зустрічного транспортного засобу потрібно перемкнути дальнє світло на ближнє?",a:["Не менше ніж за 250 м","Не менше ніж за 100 м","Не менше ніж за 150 м","Не менше ніж за 50 м"],e:"Розділ 19 ПДР: дальнє світло перемикають на ближнє не менше ніж за 250 м до зустрічного ТЗ, а також коли воно може засліпити інших водіїв.",r:"19"},
+{t:"light",q:"Яке світло має бути ввімкнене на буксирувальному ТЗ і яка сигналізація — на буксированому?",a:["На буксирувальному — ближнє світло фар, на буксированому — аварійна сигналізація","На обох — аварійна сигналізація","На обох — дальнє світло","Нічого вмикати не потрібно вдень"],e:"Під час буксирування на буксирувальному ТЗ вмикається ближнє світло, а на буксированому — аварійна сигналізація.",r:"19"},
+
+// ───────── Залізничні переїзди ─────────
+{t:"rail",q:"Рух через переїзд заборонено, засобів регулювання (шлагбаума, світлофора, стоп-лінії) немає. Де потрібно зупинитися?",a:["Не ближче 10 м до найближчої рейки","Не ближче 5 м до рейки","Не ближче 50 м до рейки","Безпосередньо перед рейками"],e:"Розділ 20 ПДР: за відсутності засобів регулювання водій зупиняється не ближче 10 м до найближчої рейки.",r:"20"},
+{t:"rail",q:"Шлагбаум піднятий, але світлофор переїзду подає червоні миготливі сигнали. Чи можна рухатися?",a:["Ні, рух заборонено","Так, адже шлагбаум піднятий","Так, з обережністю","Так, якщо потяга не видно"],e:"Червоні миготливі (поперемінно) сигнали світлофора переїзду забороняють рух незалежно від положення шлагбаума.",r:"20"},
+{t:"rail",q:"Що означає білий миготливий сигнал на світлофорі залізничного переїзду?",a:["Дозволяє рух через переїзд","Забороняє рух","Попереджає про наближення потяга","Світлофор несправний, треба зупинитися"],e:"Біломісячний миготливий сигнал свідчить про справність сигналізації та дозволяє рух через переїзд.",r:"20"},
+{t:"rail",q:"Автомобіль вимушено зупинився на залізничному переїзді. Що потрібно зробити?",a:["Негайно висадити людей і вжити всіх заходів, щоб звільнити переїзд","Чекати допомоги, не виходячи з автомобіля","Увімкнути аварійну сигналізацію і чекати поліцію","Залишити автомобіль і піти"],e:"Розділ 20 ПДР: треба негайно висадити людей, вжити заходів для звільнення переїзду, а якщо не вдається — подавати сигнали зупинки потягу.",r:"20"},
+
+// ───────── Перевезення і буксирування ─────────
+{t:"carry",q:"Як перевозити дитину зростом менше 145 см у легковому автомобілі з ременями безпеки?",a:["З використанням спеціальних засобів (дитячого автокрісла), що дають змогу пристебнути дитину","На руках у дорослого на задньому сидінні","Просто пристебнути дорослим ременем","На передньому сидінні без автокрісла, якщо дитині більше 5 років"],e:"Розділ 21 ПДР: дітей зростом менше 145 см або молодших 12 років перевозять із використанням спеціальних засобів.",r:"21"},
+{t:"carry",q:"Чи можна перевозити дитину віком до 12 років на задньому сидінні мотоцикла?",a:["Ні, заборонено","Так, у мотошоломі","Так, з дозволу батьків","Так, поза населеним пунктом"],e:"Розділ 21 ПДР забороняє перевозити дітей до 12 років на задньому сидінні мотоцикла і мопеда.",r:"21"},
+{t:"carry",q:"Якою має бути довжина гнучкого зчеплення під час буксирування?",a:["4–6 м","1–2 м","2–3 м","8–10 м"],e:"Розділ 23 ПДР: довжина гнучкого зчеплення — 4–6 м, жорсткого — не більше 4 м.",r:"23"},
+{t:"carry",q:"Якою має бути довжина жорсткого зчеплення під час буксирування?",a:["Не більше 4 м","4–6 м","Не більше 2 м","Не менше 6 м"],e:"Відстань між ТЗ на жорсткому зчепленні — не більше 4 м.",r:"23"},
+{t:"carry",q:"Чи можна буксирувати автомобіль на гнучкому зчепленні в ожеледицю?",a:["Ні, заборонено","Так, зі швидкістю до 30 км/год","Так, у світлу пору доби","Так, якщо довжина троса 6 м"],e:"Буксирування на гнучкому зчепленні в ожеледицю заборонено.",r:"23"},
+{t:"carry",q:"Як можна буксирувати автомобіль з несправною робочою гальмівною системою?",a:["Лише на жорсткому зчепленні або методом часткового навантаження","На гнучкому зчепленні довжиною 6 м","Будь-яким способом зі швидкістю до 30 км/год","Його можна вести самостійно до місця ремонту"],e:"Буксирування на гнучкому зчепленні ТЗ з несправною робочою гальмівною системою заборонено.",r:"23"},
+{t:"carry",q:"Вантаж виступає за габарити автомобіля ззаду більш ніж на скільки метрів, щоб його треба було позначити знаком «Великогабаритний вантаж»?",a:["Більш ніж на 1 м","Більш ніж на 0,5 м","Більш ніж на 2 м","Будь-який вантаж, що виступає"],e:"Вантаж, що виступає за габарити спереду чи ззаду більш ніж на 1 м (збоку — більш ніж на 0,4 м від габаритного вогню), позначають розпізнавальними знаками.",r:"22"},
+{t:"carry",q:"Чи можна пасажирам відчиняти двері під час руху автомобіля?",a:["Ні, заборонено","Так, якщо швидкість невелика","Так, у заторі","Так, праві двері"],e:"Пасажирам забороняється під час руху відчиняти двері транспортного засобу.",r:"5"},
+
+// ───────── Особливі умови руху ─────────
+{t:"special",q:"Що заборонено на автомагістралі?",a:["Розворот","Рух зі швидкістю 110 км/год","Обгін по лівій смузі","Рух легкових автомобілів з причепом"],e:"Розділ 27 ПДР: на автомагістралі заборонено розворот, рух заднім ходом, навчальну їзду тощо.",r:"27"},
+{t:"special",q:"Чи можна проводити навчальну їзду на автомагістралі?",a:["Ні, заборонено","Так, з інструктором","Так, у світлу пору доби","Так, у правій смузі"],e:"Навчальна їзда на автомагістралях заборонена.",r:"27"},
+{t:"special",q:"Транспортним засобам з якою швидкістю (за теххарактеристикою чи станом) заборонено рух автомагістраллю?",a:["Менше 40 км/год","Менше 60 км/год","Менше 20 км/год","Обмежень немає"],e:"На автомагістралях заборонено рух ТЗ, швидкість яких за технічною характеристикою або станом менше 40 км/год.",r:"27"},
+{t:"special",q:"На гірській дорозі зустрічний роз'їзд утруднений. Хто має дати дорогу?",a:["Водій, що рухається на спуск, дає дорогу тому, хто рухається на підйом","Водій, що рухається на підйом","Той, хто має більшу масу","Той, хто першим під'їхав"],e:"Розділ 28 ПДР: на гірських дорогах і крутих спусках дорогу дає водій, який рухається на спуск.",r:"28"},
+{t:"special",q:"Що заборонено на гірських дорогах і крутих спусках?",a:["Рухатися з вимкненим зчепленням або на нейтральній передачі (накатом)","Рухатися на знижувальній передачі","Користуватися моторним гальмуванням","Вмикати ближнє світло вдень"],e:"Розділ 28 ПДР забороняє рух накатом — з вимкненим зчепленням або передачею — на гірських дорогах і крутих спусках.",r:"28"},
+
+// ───────── Технічний стан ─────────
+{t:"tech",q:"За якої залишкової висоти малюнка протектора шин заборонено експлуатувати легковий автомобіль?",a:["Менше 1,6 мм","Менше 1,0 мм","Менше 2,0 мм","Менше 3,0 мм"],e:"Розділ 31 ПДР: для легкових автомобілів — менше 1,6 мм.",r:"31"},
+{t:"tech",q:"За якої залишкової висоти малюнка протектора заборонено експлуатувати мотоцикл?",a:["Менше 0,8 мм","Менше 1,6 мм","Менше 0,5 мм","Менше 1,0 мм"],e:"Для мотоциклів і мопедів — менше 0,8 мм; вантажних автомобілів — менше 1 мм; автобусів — менше 2 мм.",r:"31"},
+{t:"tech",q:"Чим має бути укомплектований легковий автомобіль?",a:["Аптечкою, вогнегасником і знаком аварійної зупинки","Лише аптечкою","Буксирувальним тросом і домкратом","Вогнегасником і запасним колесом"],e:"Легкові автомобілі мають бути укомплектовані медичною аптечкою, вогнегасником і знаком аварійної зупинки (миготливим червоним ліхтарем).",r:"31"},
+{t:"tech",q:"У дорозі відмовила робоча гальмівна система. Чи можна продовжувати рух самостійно?",a:["Ні, рух заборонено","Так, до місця ремонту з аварійною сигналізацією","Так, зі швидкістю до 20 км/год","Так, у світлу пору доби"],e:"Експлуатація ТЗ з несправною робочою гальмівною системою заборонена. Такий автомобіль можна лише буксирувати на жорсткому зчепленні або частковим навантаженням.",r:"31"},
+
+// ───────── Дорожні знаки ─────────
+{t:"signs",s:"giveway",q:"Що означає цей знак?",a:["Дати дорогу","Головна дорога","Інша небезпека","Рух заборонено"],e:"Знак 2.1 «Дати дорогу»: водій повинен дати дорогу ТЗ, що наближаються по перехрещуваній дорозі.",r:"33"},
+{t:"signs",s:"stop",q:"Що вимагає цей знак?",a:["Проїзд без зупинки заборонено: зупинитися і дати дорогу","Зменшити швидкість до 20 км/год","Стоянку заборонено","Рух лише для громадського транспорту"],e:"Знак 2.2 «Проїзд без зупинки заборонено» (STOP) вимагає обов'язково зупинитися перед стоп-лінією або краєм перехрещуваної проїзної частини і дати дорогу.",r:"33"},
+{t:"signs",s:"main",q:"Що означає цей знак?",a:["Головна дорога","Кінець головної дороги","Дати дорогу","Перехрестя з круговим рухом"],e:"Знак 2.3 «Головна дорога» дає право першочергового проїзду нерегульованих перехресть.",r:"33"},
+{t:"signs",s:"mainend",q:"Що означає цей знак?",a:["Кінець головної дороги","Головна дорога","Кінець усіх обмежень","Перевага зустрічного руху"],e:"Знак 2.4 «Кінець головної дороги».",r:"33"},
+{t:"signs",s:"noentry",q:"Що означає цей знак?",a:["В'їзд заборонено","Рух заборонено","Зупинку заборонено","Кінець зони обмеження"],e:"Знак 3.21 «В'їзд заборонено» забороняє в'їзд усіх ТЗ (крім маршрутних) з метою запобігти руху назустріч.",r:"33"},
+{t:"signs",s:"notraffic",q:"Що означає цей знак?",a:["Рух заборонено","В'їзд заборонено","Обмеження швидкості","Кінець усіх обмежень"],e:"Знак 3.1 «Рух заборонено» забороняє рух усіх транспортних засобів.",r:"33"},
+{t:"signs",s:"speed60",q:"Що означає цей знак?",a:["Обмеження максимальної швидкості: не більше 60 км/год","Рекомендована швидкість 60 км/год","Мінімальна швидкість 60 км/год","Обмеження ваги 60 тонн"],e:"Знак 3.29 «Обмеження максимальної швидкості» забороняє рух зі швидкістю, що перевищує зазначену.",r:"33"},
+{t:"signs",s:"nostop",q:"Що означає цей знак?",a:["Зупинку заборонено","Стоянку заборонено","В'їзд заборонено","Кінець зони стоянки"],e:"Знак 3.34 «Зупинку заборонено» (червоний хрест на синьому фоні) забороняє і зупинку, і стоянку.",r:"33"},
+{t:"signs",s:"nopark",q:"Що означає цей знак?",a:["Стоянку заборонено","Зупинку заборонено","Рух заборонено","Місце для стоянки"],e:"Знак 3.35 «Стоянку заборонено» (одна червона смуга) забороняє стоянку, але зупинку дозволяє.",r:"33"},
+{t:"signs",s:"straight",q:"Що означає цей знак?",a:["Рух прямо (обов'язковий напрямок)","Одностороння дорога","Головна дорога","Рекомендований напрямок"],e:"Наказовий знак «Рух прямо»: дозволено рух лише в напрямку стрілки.",r:"33"},
+{t:"signs",s:"right",q:"Що означає цей знак?",a:["Рух праворуч (обов'язковий напрямок)","Небезпечний поворот праворуч","Об'їзд перешкоди праворуч","Дати дорогу праворуч"],e:"Наказовий знак «Рух праворуч»: дозволено рух лише праворуч.",r:"33"},
+{t:"signs",s:"left",q:"Що означає цей знак?",a:["Рух ліворуч (обов'язковий напрямок)","Поворот ліворуч заборонено","Небезпечний поворот ліворуч","Розворот"],e:"Наказовий знак «Рух ліворуч»: дозволено рух лише ліворуч.",r:"33"},
+{t:"signs",s:"parking",q:"Що означає цей знак?",a:["Місце для стоянки","Стоянку заборонено","Пункт технічного обслуговування","Платна дорога"],e:"Знак 5.38 «Місце для стоянки» позначає місця, де дозволено стоянку.",r:"33"},
+{t:"signs",s:"danger",q:"Що означає цей знак?",a:["Інша небезпека","Дати дорогу","Аварійно небезпечна ділянка — обов'язкова зупинка","Кінець головної дороги"],e:"Попереджувальний знак «Інша небезпека» попереджає про небезпеку, не передбачену іншими знаками.",r:"33"},
+{t:"signs",s:"lights",q:"Про що попереджає цей знак?",a:["Світлофорне регулювання попереду","Залізничний переїзд","Пішохідний перехід","Несправний світлофор"],e:"Попереджувальний знак «Світлофорне регулювання» попереджає про перехрестя чи ділянку з рухом, що регулюється світлофором.",r:"33"},
+{t:"signs",s:"crossing",q:"Що означає цей знак?",a:["Пішохідний перехід","Пішохідна зона","Рух пішоходів заборонено","Діти"],e:"Інформаційно-вказівний знак «Пішохідний перехід» позначає місце переходу.",r:"33"},
+{t:"signs",s:"oneway",q:"Що означає цей знак?",a:["Дорога з одностороннім рухом","Рух прямо (обов'язковий напрямок)","Головна дорога","Тупик"],e:"Знак «Дорога з одностороннім рухом» (прямокутний) позначає дорогу, по якій рух дозволено лише в одному напрямку.",r:"33"},
+{t:"signs",s:"noovertake",q:"Що означає цей знак?",a:["Обгін заборонено","Обгін вантажним автомобілям заборонено","Кінець заборони обгону","Перевага зустрічного руху"],e:"Знак 3.25 «Обгін заборонено» забороняє обгін усіх ТЗ, крім тихохідних, гужових возів, мопедів і двоколісних мотоциклів без коляски.",r:"33"},
+
+// ───────── Безпека і перша допомога ─────────
+{t:"safety",q:"Почався занос задньої осі автомобіля. Як потрібно діяти кермом?",a:["Повернути кермо в бік заносу","Повернути кермо в бік, протилежний заносу","Різко загальмувати","Різко додати газу і тримати кермо прямо"],e:"У разі заносу задньої осі кермо плавно повертають у бік заносу, не гальмуючи різко.",r:"Безпека"},
+{t:"safety",q:"Як зменшити ризик аквапланування на мокрій дорозі?",a:["Знизити швидкість і стежити за станом шин","Збільшити тиск у шинах понад норму","Рухатися по калюжах на високій швидкості, щоб проскочити","Увімкнути протитуманні фари"],e:"Ризик аквапланування зростає зі швидкістю і зношеністю протектора, тому на мокрій дорозі швидкість знижують.",r:"Безпека"},
+{t:"safety",q:"Який номер єдиної служби екстреної допомоги?",a:["112","101","103","104"],e:"112 — єдиний номер виклику екстрених служб. Також діють 101 (ДСНС), 102 (поліція), 103 (швидка).",r:"Безпека"},
+{t:"safety",q:"Потерпілий без свідомості, але дихає. У яке положення його покласти до приїзду швидкої?",a:["У стабільне бокове (відновне) положення","На спину з піднятою головою","На живіт обличчям донизу","Посадити, обпертого на автомобіль"],e:"Стабільне бокове положення запобігає западанню язика та потраплянню блювотних мас у дихальні шляхи.",r:"Безпека"},
+{t:"safety",q:"Коли можна витягати потерпілого з пошкодженого автомобіля?",a:["Коли є безпосередня загроза його життю (пожежа, ризик вибуху, потрібна реанімація)","Завжди, якомога швидше","Ніколи, тільки рятувальники","Лише якщо він сам просить"],e:"Без потреби потерпілого не переміщують через ризик травми хребта. Виймати його потрібно, якщо залишатися в авто небезпечніше.",r:"Безпека"},
+{t:"safety",q:"Як правильно гальмувати на слизькій дорозі на автомобілі без ABS?",a:["Плавно, переривчастим натисканням на педаль, не блокуючи колеса","Різко натиснути на педаль до упору","Тільки стоянковим гальмом","Вимкнути запалювання"],e:"Заблоковані колеса втрачають керованість, тому без ABS гальмують переривчасто й плавно.",r:"Безпека"}
+];
+
+</script>
+<script>
+(function(){
+'use strict';
+var TOPICS = Object.assign({}, window.PDR_TOPICS, {custom:"Мої питання"});
+var KEY = 'zelenyi-syhnal-v1';
+var view = document.getElementById('view');
+
+/* ---------- utils ---------- */
+function hash(s){var h=5381;for(var i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0;}return (h>>>0).toString(36);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function today(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function fmtTime(s){s=Math.max(0,Math.round(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function plural(n,one,few,many){var m10=n%10,m100=n%100;if(m10===1&&m100!==11)return one;if(m10>=2&&m10<=4&&(m100<12||m100>14))return few;return many;}
+function vibrate(ms){try{if(navigator.vibrate)navigator.vibrate(ms);}catch(e){}}
+
+/* ---------- state ---------- */
+function defState(){return {xp:0,answered:0,correct:0,stats:{},mistakes:[],best:{marathon:0,blitz:0,signs:0,combo:0},exams:[],days:[],ach:{},custom:[]};}
+function load(){try{var r=localStorage.getItem(KEY);if(r){var o=JSON.parse(r);var d=defState();Object.keys(d).forEach(function(k){if(o[k]==null)o[k]=d[k];});o.best=Object.assign(d.best,o.best);return o;}}catch(e){}return defState();}
+var S = load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+/* ---------- question bank ---------- */
+var Q=[], QById={};
+function normalize(q){
+  if(!q||typeof q.q!=='string'||!Array.isArray(q.a)||q.a.length<2) return null;
+  var a=q.a.map(String);
+  if(typeof q.c==='number'&&q.c>0&&q.c<a.length){var c=a.splice(q.c,1)[0];a.unshift(c);}
+  return {t:(q.t&&TOPICS[q.t])?q.t:'custom',q:q.q,a:a,e:q.e||'',r:q.r||'',s:q.s||null,img:q.img||null};
+}
+function buildBank(){
+  Q=[];QById={};
+  function add(q,src){var n=normalize(q);if(!n)return;if(src==='custom'&&!q.t)n.t='custom';var id='q'+hash(n.q+'|'+n.a[0]);if(QById[id])return;n.id=id;n.src=src;Q.push(n);QById[id]=n;}
+  (window.PDR_QUESTIONS||[]).forEach(function(q){add(q,'base');});
+  (S.custom||[]).forEach(function(q){add(q,'custom');});
+}
+buildBank();
+function st(id){return S.stats[id]||{s:0,c:0,w:0};}
+function mastered(id){return st(id).s>=2;}
+function topicIds(t){return Q.filter(function(q){return q.t===t;}).map(function(q){return q.id;});}
+function activeTopics(){return Object.keys(TOPICS).filter(function(t){return topicIds(t).length>0;});}
+
+/* ---------- levels ---------- */
+var RANKS=[[1,'Пішохід'],[2,'Учень автошколи'],[4,'Новачок за кермом'],[6,'Впевнений водій'],[9,'Досвідчений водій'],[13,'Інструктор'],[18,'Ас дороги']];
+function level(xp){var L=1,need=100,rest=xp;while(rest>=need){rest-=need;L++;need=100+50*(L-1);}return {L:L,rest:rest,need:need};}
+function rank(L){var r=RANKS[0][1];RANKS.forEach(function(x){if(L>=x[0])r=x[1];});return r;}
+function streak(){var set={};S.days.forEach(function(d){set[d]=1;});var d=new Date(),n=0;if(!set[today(d)]){d.setDate(d.getDate()-1);}while(set[today(d)]){n++;d.setDate(d.getDate()-1);}return n;}
+function readiness(){
+  if(!Q.length)return 0;
+  var m=Q.filter(function(q){return mastered(q.id);}).length/Q.length;
+  var ex=S.exams.slice(-5);var pr=ex.length?ex.filter(function(e){return e.pass;}).length/ex.length:0;
+  return Math.round((m*0.6+pr*0.4)*100);
+}
+
+/* ---------- achievements ---------- */
+var ACH=[
+ {id:'first',n:'Перший крок',d:'Перша правильна відповідь',tag:'1',test:function(){return S.correct>=1;}},
+ {id:'exam1',n:'Перший білет',d:'Пройти білет до кінця',tag:'20',test:function(){return S.exams.length>=1;}},
+ {id:'exampass',n:'Склав!',d:'Скласти білет (до 2 помилок)',tag:'OK',test:function(){return S.exams.some(function(e){return e.pass;});}},
+ {id:'perfect',n:'Ідеальний білет',d:'20 з 20 без помилок',tag:'20/20',test:function(){return S.exams.some(function(e){return e.score===20;});}},
+ {id:'pass5',n:'Готовий до ГСЦ',d:'Скласти 5 білетів поспіль',tag:'×5',test:function(){var l=S.exams.slice(-5);return l.length===5&&l.every(function(e){return e.pass;});}},
+ {id:'combo10',n:'Комбо ×10',d:'10 правильних поспіль у грі',tag:'×10',test:function(){return S.best.combo>=10;}},
+ {id:'combo25',n:'Комбо ×25',d:'25 правильних поспіль у грі',tag:'×25',test:function(){return S.best.combo>=25;}},
+ {id:'c100',n:'Сотня',d:'100 правильних відповідей',tag:'100',test:function(){return S.correct>=100;}},
+ {id:'c500',n:'П’ятсот',d:'500 правильних відповідей',tag:'500',test:function(){return S.correct>=500;}},
+ {id:'blitz15',n:'Бліц-майстер',d:'15+ відповідей у Бліці',tag:'60с',test:function(){return S.best.blitz>=15;}},
+ {id:'signs',n:'Знавець знаків',d:'Вивчити всі знаки',tag:'!',test:function(){var ids=topicIds('signs');return ids.length&&ids.every(mastered);}},
+ {id:'topic',n:'Тема закрита',d:'Вивчити всі питання однієї теми',tag:'✓',test:function(){return activeTopics().some(function(t){var ids=topicIds(t);return ids.length&&ids.every(mastered);});}},
+ {id:'streak3',n:'Три дні поспіль',d:'Займатися 3 дні підряд',tag:'3д',test:function(){return streak()>=3;}},
+ {id:'streak7',n:'Тиждень за кермом',d:'Займатися 7 днів підряд',tag:'7д',test:function(){return streak()>=7;}},
+ {id:'all',n:'Знаю всі ПДР',d:'Вивчити 90% усіх питань',tag:'90%',test:function(){return Q.length&&Q.filter(function(q){return mastered(q.id);}).length/Q.length>=0.9;}}
+];
+function checkAch(){ACH.forEach(function(a){if(!S.ach[a.id]&&a.test()){S.ach[a.id]=Date.now();toast(a.tag,'Досягнення: '+a.n,a.d);}});save();}
+
+/* ---------- toasts ---------- */
+function toast(tag,title,sub){
+  var box=document.getElementById('toasts');var t=document.createElement('div');t.className='toast';
+  t.innerHTML='<span class="medal">'+esc(tag)+'</span><div><b>'+esc(title)+'</b><span>'+esc(sub||'')+'</span></div>';
+  box.appendChild(t);setTimeout(function(){t.remove();},3200);
+}
+
+/* ---------- progress recording ---------- */
+function addXP(n){var before=level(S.xp).L;S.xp+=n;var after=level(S.xp).L;if(after>before)toast(String(after),'Новий рівень: '+after,rank(after));}
+function record(q,ok){
+  var s=st(q.id);s=Object.assign({},s);
+  if(ok){s.c++;s.s++;}else{s.w++;s.s=0;}
+  S.stats[q.id]=s;S.answered++;if(ok)S.correct++;
+  var i=S.mistakes.indexOf(q.id);
+  if(!ok&&i<0)S.mistakes.push(q.id);
+  if(ok&&i>=0&&s.s>=2)S.mistakes.splice(i,1);
+  var d=today();if(S.days.indexOf(d)<0){S.days.push(d);if(S.days.length>400)S.days=S.days.slice(-400);}
+  save();
+}
+
+/* ---------- road signs (SVG) ---------- */
+function oct(r){var p=[];for(var i=0;i<8;i++){var a=Math.PI/8+i*Math.PI/4;p.push((50+r*Math.cos(a)).toFixed(1)+','+(50+r*Math.sin(a)).toFixed(1));}return p.join(' ');}
+var RED='#D3262F',BLUE='#1D5BC4',YEL='#F2C200',INK='#16181B';
+function ring(fill){return '<circle cx="50" cy="50" r="44" fill="'+fill+'" stroke="'+RED+'" stroke-width="9"/>';}
+function blueDisc(){return '<circle cx="50" cy="50" r="46" fill="'+BLUE+'" stroke="#fff" stroke-width="2.5"/>';}
+function triUp(){return '<polygon points="50,9 94,87 6,87" fill="#fff" stroke="'+RED+'" stroke-width="8" stroke-linejoin="round"/>';}
+function car(x,col){return '<g fill="'+col+'"><rect x="'+(x+3)+'" y="33" width="16" height="12" rx="3"/><rect x="'+x+'" y="42" width="22" height="16" rx="4"/><rect x="'+(x+1)+'" y="57" width="5" height="6" rx="1"/><rect x="'+(x+16)+'" y="57" width="5" height="6" rx="1"/></g>';}
+var SIGNS={
+ giveway:'<polygon points="7,13 93,13 50,90" fill="#fff" stroke="'+RED+'" stroke-width="9" stroke-linejoin="round"/>',
+ stop:'<polygon points="'+oct(48)+'" fill="#fff"/><polygon points="'+oct(44)+'" fill="'+RED+'"/><text x="50" y="58.5" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="23" fill="#fff">STOP</text>',
+ main:'<polygon points="50,3 97,50 50,97 3,50" fill="#fff" stroke="'+INK+'" stroke-width="2"/><polygon points="50,19 81,50 50,81 19,50" fill="'+YEL+'"/>',
+ mainend:'<polygon points="50,3 97,50 50,97 3,50" fill="#fff" stroke="'+INK+'" stroke-width="2"/><polygon points="50,19 81,50 50,81 19,50" fill="'+YEL+'"/><g stroke="'+INK+'" stroke-width="3"><line x1="27" y1="40" x2="60" y2="73"/><line x1="34" y1="34" x2="66" y2="66"/><line x1="40" y1="27" x2="73" y2="60"/></g>',
+ notraffic:ring('#fff'),
+ noentry:'<circle cx="50" cy="50" r="47" fill="'+RED+'"/><rect x="17" y="41" width="66" height="18" fill="#fff"/>',
+ speed60:ring('#fff')+'<text x="50" y="62" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="36" fill="'+INK+'">60</text>',
+ nostop:ring(BLUE)+'<g stroke="'+RED+'" stroke-width="8"><line x1="22" y1="22" x2="78" y2="78"/><line x1="78" y1="22" x2="22" y2="78"/></g>',
+ nopark:ring(BLUE)+'<line x1="22" y1="22" x2="78" y2="78" stroke="'+RED+'" stroke-width="8"/>',
+ straight:blueDisc()+'<path d="M50 18 L71 43 H57 V82 H43 V43 H29 Z" fill="#fff"/>',
+ right:blueDisc()+'<path d="M82 50 L57 29 V43 H18 V57 H57 V71 Z" fill="#fff"/>',
+ left:blueDisc()+'<path d="M18 50 L43 29 V43 H82 V57 H43 V71 Z" fill="#fff"/>',
+ parking:'<rect x="5" y="5" width="90" height="90" rx="10" fill="'+BLUE+'" stroke="#fff" stroke-width="3"/><text x="50" y="74" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="66" fill="#fff">P</text>',
+ danger:triUp()+'<rect x="45.5" y="38" width="9" height="28" rx="3" fill="'+INK+'"/><circle cx="50" cy="75" r="5" fill="'+INK+'"/>',
+ lights:triUp()+'<rect x="41" y="35" width="18" height="44" rx="5" fill="'+INK+'"/><circle cx="50" cy="44" r="5" fill="'+RED+'"/><circle cx="50" cy="57" r="5" fill="'+YEL+'"/><circle cx="50" cy="70" r="5" fill="#1E9E57"/>',
+ crossing:'<rect x="5" y="5" width="90" height="90" rx="8" fill="'+BLUE+'" stroke="#fff" stroke-width="3"/><polygon points="50,13 88,84 12,84" fill="#fff"/><g fill="'+INK+'"><rect x="24" y="76" width="8" height="4"/><rect x="36" y="76" width="8" height="4"/><rect x="48" y="76" width="8" height="4"/><rect x="60" y="76" width="8" height="4"/></g><circle cx="52" cy="37" r="5" fill="'+INK+'"/><g stroke="'+INK+'" stroke-width="4.5" stroke-linecap="round" fill="none"><path d="M51 44 L48 59"/><path d="M48 59 L41 71"/><path d="M48 59 L57 70"/><path d="M50 48 L42 55"/><path d="M50 48 L59 53"/></g>',
+ oneway:'<rect x="22" y="4" width="56" height="92" rx="6" fill="'+BLUE+'" stroke="#fff" stroke-width="3"/><path d="M50 15 L68 39 H57 V86 H43 V39 H32 Z" fill="#fff"/>',
+ noovertake:ring('#fff')+car(24,RED)+car(54,INK)
+};
+function signSVG(k){return '<svg class="sign" viewBox="0 0 100 100" role="img" aria-label="Дорожній знак">'+(SIGNS[k]||'')+'</svg>';}
+
+/* ---------- icons ---------- */
+var IC={
+ x:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+ heart:function(on){return '<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.5-9.3C1.1 8.4 3.2 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.8 0 5.9 3.9 4.5 7.2C19.5 16.4 12 21 12 21z" fill="'+(on?'var(--red)':'none')+'" stroke="var(--red)" stroke-width="1.8"/></svg>';},
+ ticket:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M6 10h28v7a3 3 0 0 0 0 6v7H6v-7a3 3 0 0 0 0-6z"/><path d="M24 10v20" stroke-dasharray="3 3"/><path d="M11 16h8M11 21h6"/></svg>',
+ clock:'<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="20" cy="22" r="13"/><path d="M20 22v-7M16 4h8M20 4v5"/></svg>',
+ car:'<svg viewBox="0 0 44 24"><rect x="2" y="3" width="40" height="18" rx="7" fill="#F2C200"/><rect x="25" y="6" width="9" height="12" rx="2" fill="#1C2128"/><rect x="8" y="6" width="7" height="12" rx="2" fill="#1C2128"/><rect x="39" y="5" width="3" height="4" rx="1" fill="#fff"/><rect x="39" y="15" width="3" height="4" rx="1" fill="#fff"/></svg>'
+};
+
+/* ---------- navigation ---------- */
+var current='home', RUN=null;
+var SCREENS={home:home,ticket:ticket,game:game,topics:topics,profile:profile};
+function go(name){
+  if(RUN&&!RUN.ended){RUN.ended=true;stopRun();}
+  current=name;document.body.classList.remove('focus');
+  Array.prototype.forEach.call(document.querySelectorAll('#nav button'),function(b){if(b.dataset.go===name)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  view.innerHTML='';(SCREENS[name]||home)();window.scrollTo(0,0);
+}
+document.getElementById('nav').addEventListener('click',function(e){var b=e.target.closest('button[data-go]');if(b)go(b.dataset.go);});
+view.addEventListener('click',function(e){
+  var b=e.target.closest('[data-act]');if(!b)return;
+  var a=b.dataset.act,arg=b.dataset.arg;
+  if(ACTIONS[a])ACTIONS[a](arg,b);
+});
+var ACTIONS={
+  go:function(n){go(n);},
+  exam:function(){startExam();},
+  marathon:function(){startMarathon('marathon');},
+  signs:function(){startMarathon('signs');},
+  blitz:function(){startBlitz();},
+  topic:function(t){startTraining(t);},
+  mistakes:function(){startTraining('__mistakes');},
+  fresh:function(){startTraining('__new');},
+  all:function(){startTraining('__all');}
+};
+function page(html){view.innerHTML='<div class="page">'+html+'</div>';return view.firstChild;}
+
+/* ---------- screens ---------- */
+function heroHTML(){
+  var lv=level(S.xp),pct=Math.round(lv.rest/lv.need*100),sk=streak();
+  return '<section class="hero" aria-label="Ваш прогрес">'+
+    '<div class="hero-row" style="justify-content:space-between"><span class="eyebrow">Рівень '+lv.L+'</span><span class="lamp" aria-hidden="true"><i></i><i></i><i class="on"></i></span></div>'+
+    '<h1>'+esc(rank(lv.L))+'</h1>'+
+    '<div class="hero-row"><span class="chip">Серія <b>'+sk+'</b> '+plural(sk,'день','дні','днів')+'</span><span class="chip">Готовність до іспиту <b>'+readiness()+'%</b></span><span class="chip">Досвід <b>'+S.xp+'</b> XP</span></div>'+
+    '<div class="road" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'" aria-label="До наступного рівня"><span class="done" style="width:'+pct+'%"></span><span class="car" style="left:calc(22px + '+pct+'% * 0.92)">'+IC.car+'</span></div>'+
+    '<div class="road-labels"><span>Рівень '+lv.L+'</span><span class="mono">'+lv.rest+' / '+lv.need+' XP</span><span>Рівень '+(lv.L+1)+'</span></div>'+
+  '</section>';
+}
+function home(){
+  var mc=S.mistakes.filter(function(id){return QById[id];}).length;
+  var weak=activeTopics().map(function(t){var ids=topicIds(t);var m=ids.filter(mastered).length;return {t:t,p:m/ids.length,m:m,n:ids.length};}).sort(function(a,b){return a.p-b.p;}).slice(0,3);
+  page(heroHTML()+
+   '<section class="grid">'+
+     '<button class="action primary" data-act="exam"><span class="ic">'+IC.ticket+'</span><div><b>Пройти білет</b><span>20 питань · 20 хвилин · до 2 помилок, як у сервісному центрі</span></div></button>'+
+     '<button class="action" data-act="marathon"><span class="ic">'+IC.heart(true).replace('viewBox="0 0 24 24"','viewBox="0 0 24 24" width="36" height="36"')+'</span><div><b>Марафон</b><span>Безкінечна гра: 3 життя, комбо, рекорди. Рекорд: '+S.best.marathon+'</span></div></button>'+
+     '<button class="action" data-act="signs"><span class="ic">'+signSVG('giveway')+'</span><div><b>Знаки</b><span>Вгадай дорожній знак. Рекорд: '+S.best.signs+'</span></div></button>'+
+     '<button class="action" data-act="mistakes"'+(mc?'':' disabled style="opacity:.55;cursor:default"')+'><span class="ic">'+signSVG('danger')+'</span><div><b>Мої помилки</b><span>'+(mc?mc+' '+plural(mc,'питання','питання','питань')+' на повторення':'Поки що помилок немає')+'</span></div></button>'+
+   '</section>'+
+   '<section class="section"><div class="section-head"><h2>Найслабші теми</h2><button class="link" data-act="go" data-arg="topics">Усі теми</button></div>'+
+     '<div class="grid">'+weak.map(topicBtn).join('')+'</div></section>'+
+   (S.exams.length?'<section class="section"><div class="section-head"><h2>Останні білети</h2><button class="link" data-act="go" data-arg="ticket">Історія</button></div>'+examHistory(3)+'</section>':'')
+  );
+}
+function topicBtn(x){
+  return '<button class="topic" data-act="topic" data-arg="'+x.t+'"><b>'+esc(TOPICS[x.t])+'</b><span class="mono muted">'+x.m+'/'+x.n+'</span><span class="bar"><i style="width:'+Math.round(x.p*100)+'%"></i></span></button>';
+}
+function examHistory(n){
+  var list=S.exams.slice(-n).reverse();
+  return '<div class="history">'+list.map(function(e){
+    var d=new Date(e.d);
+    return '<div class="hist-row"><span>'+d.toLocaleDateString('uk-UA',{day:'numeric',month:'short'})+', '+d.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'})+'</span><span class="mono">'+e.score+'/20 · '+fmtTime(e.time)+'</span><span class="pill '+(e.pass?'ok':'bad')+'">'+(e.pass?'Склав':'Не склав')+'</span></div>';
+  }).join('')+'</div>';
+}
+function ticket(){
+  var passed=S.exams.filter(function(e){return e.pass;}).length;
+  page('<div class="section"><span class="eyebrow">Теоретичний іспит</span><h1>Білет як у сервісному центрі МВС</h1><p class="muted">Випадкові 20 питань з бази. Пояснення з’являться після завершення, як на справжньому іспиті.</p></div>'+
+   '<div class="rules"><div class="rule"><b>20</b><span class="muted">питань у білеті</span></div><div class="rule"><b>20:00</b><span class="muted">хвилин на все</span></div><div class="rule"><b>≤ 2</b><span class="muted">помилки, щоб скласти</span></div></div>'+
+   '<div class="btn-row"><button class="btn go" data-act="exam">Почати білет</button></div>'+
+   (S.exams.length?'<section class="section"><div class="section-head"><h2>Історія</h2><span class="muted">Складено '+passed+' з '+S.exams.length+'</span></div>'+examHistory(10)+'</section>':'<p class="muted">Ще жодного білета. Перший завжди найцікавіший.</p>'));
+}
+function game(){
+  var lv=level(S.xp);
+  page(heroHTML()+
+   '<section class="section"><h2>Режими гри</h2><p class="muted">Грайте скільки завгодно: кожна правильна відповідь дає досвід, а помилки потрапляють у список для повторення.</p>'+
+   '<div class="grid">'+
+     '<button class="action" data-act="marathon"><span class="ic">'+IC.heart(true).replace('viewBox="0 0 24 24"','viewBox="0 0 24 24" width="36" height="36"')+'</span><div><b>Марафон</b><span>Питання з усіх тем без кінця. 3 життя, множник за серію правильних. Рекорд: <b class="mono">'+S.best.marathon+'</b></span></div></button>'+
+     '<button class="action" data-act="blitz"><span class="ic">'+IC.clock+'</span><div><b>Бліц 60 секунд</b><span>Скільки встигнеш за хвилину? Помилка забирає 5 секунд. Рекорд: <b class="mono">'+S.best.blitz+'</b></span></div></button>'+
+     '<button class="action" data-act="signs"><span class="ic">'+signSVG('stop')+'</span><div><b>Знаки</b><span>Вгадай дорожній знак за малюнком. 3 життя. Рекорд: <b class="mono">'+S.best.signs+'</b></span></div></button>'+
+     '<button class="action" data-act="fresh"><span class="ic">'+signSVG('straight')+'</span><div><b>Нові питання</b><span>Тільки ті, яких ще не бачили: по 20 за раз.</span></div></button>'+
+   '</div></section>'+
+   '<section class="section"><h2>Звання</h2><div class="history">'+RANKS.map(function(r){var on=lv.L>=r[0];return '<div class="hist-row"><span>'+(on?'<b>':'')+esc(r[1])+(on?'</b>':'')+'</span><span class="mono muted">рівень '+r[0]+'</span><span class="pill '+(on?'ok':'bad')+'" style="'+(on?'':'background:var(--surface-2);color:var(--muted)')+'">'+(on?'Отримано':'Попереду')+'</span></div>';}).join('')+'</div></section>');
+}
+function topics(){
+  var all=activeTopics().map(function(t){var ids=topicIds(t);var m=ids.filter(mastered).length;return {t:t,p:m/ids.length,m:m,n:ids.length};});
+  var tm=Q.filter(function(q){return mastered(q.id);}).length;
+  page('<div class="section"><span class="eyebrow">Навчання</span><h1>Теми ПДР</h1><p class="muted">Питання вважається вивченим після двох правильних відповідей поспіль. Вивчено '+tm+' з '+Q.length+'.</p></div>'+
+   '<div class="btn-row"><button class="btn" data-act="all">Усі питання підряд</button><button class="btn ghost" data-act="fresh">Тільки нові</button></div>'+
+   '<div class="grid">'+all.map(topicBtn).join('')+'</div>');
+}
+function profile(){
+  var acc=S.answered?Math.round(S.correct/S.answered*100):0;var tm=Q.filter(function(q){return mastered(q.id);}).length;
+  var mc=S.mistakes.filter(function(id){return QById[id];}).length;var cc=(S.custom||[]).length;
+  var el=page('<div class="section"><span class="eyebrow">Профіль</span><h1>Статистика</h1></div>'+
+   '<div class="stats"><div class="stat"><b>'+S.answered+'</b><span>відповідей</span></div><div class="stat"><b>'+acc+'%</b><span>точність</span></div><div class="stat"><b>'+tm+'/'+Q.length+'</b><span>вивчено питань</span></div><div class="stat"><b>'+S.best.combo+'</b><span>найкраще комбо</span></div><div class="stat"><b>'+S.exams.filter(function(e){return e.pass;}).length+'</b><span>складених білетів</span></div><div class="stat"><b>'+streak()+'</b><span>днів поспіль</span></div></div>'+
+   '<section class="section"><div class="section-head"><h2>Досягнення</h2><span class="muted">'+Object.keys(S.ach).length+' з '+ACH.length+'</span></div><div class="ach">'+ACH.map(function(a){var on=!!S.ach[a.id];return '<div class="badge'+(on?' on':'')+'"><span class="medal">'+esc(a.tag)+'</span><div><b>'+esc(a.n)+'</b><span>'+esc(a.d)+'</span></div></div>';}).join('')+'</div></section>'+
+   '<section class="section"><h2>Повторення</h2><div class="btn-row"><button class="btn" data-act="mistakes"'+(mc?'':' disabled style="opacity:.55"')+'>Мої помилки ('+mc+')</button></div></section>'+
+   '<section class="section"><h2>Налаштування</h2>'+
+    '<details class="box"><summary>Встановити на телефон або ПК</summary><div style="display:flex;flex-direction:column;gap:8px">'+
+      '<p><b>Android (Chrome):</b> відкрийте сайт → меню ⋮ → «Додати на головний екран» або «Встановити застосунок».</p>'+
+      '<p><b>iPhone / iPad (Safari):</b> відкрийте сайт → кнопка «Поділитися» → «На початковий екран».</p>'+
+      '<p><b>ПК (Chrome, Edge):</b> значок встановлення праворуч в адресному рядку.</p>'+
+      '<p class="muted">Після встановлення застосунок працює без інтернету. Прогрес зберігається окремо на кожному пристрої; перенести його можна нижче.</p></div></details>'+
+    '<details class="box"><summary>Перенести прогрес на інший пристрій</summary><div style="display:flex;flex-direction:column;gap:10px">'+
+      '<p class="muted">Скопіюйте код тут і вставте його на іншому пристрої.</p>'+
+      '<label for="exp" class="eyebrow">Код вашого прогресу</label><textarea id="exp" readonly></textarea>'+
+      '<div class="btn-row"><button class="btn ghost" id="copyBtn">Скопіювати код</button></div>'+
+      '<label for="imp" class="eyebrow">Вставте код з іншого пристрою</label><textarea id="imp" placeholder="Вставте код сюди"></textarea>'+
+      '<div class="btn-row"><button class="btn" id="impBtn">Завантажити прогрес</button></div><p id="impMsg" class="muted"></p></div></details>'+
+    '<details class="box"><summary>Додати власні питання ('+cc+')</summary><div style="display:flex;flex-direction:column;gap:10px">'+
+      '<p class="muted">Формат JSON: масив об’єктів <span class="mono">{"q":"Питання","a":["Варіант 1","Варіант 2"],"c":0,"e":"Пояснення","r":"12.4"}</span>, де <span class="mono">c</span> — номер правильної відповіді (з нуля). Необов’язково: <span class="mono">"img"</span> — посилання на картинку.</p>'+
+      '<input type="file" id="qfile" accept=".json,application/json">'+
+      '<label for="qjson" class="eyebrow">Або вставте JSON</label><textarea id="qjson" placeholder=\'[{"q":"...","a":["...","..."],"c":0}]\'></textarea>'+
+      '<div class="btn-row"><button class="btn" id="qadd">Додати питання</button>'+(cc?'<button class="btn ghost" id="qclear">Видалити мої питання</button>':'')+'</div><p id="qmsg" class="muted"></p></div></details>'+
+    '<details class="box"><summary>Скинути весь прогрес</summary><div class="confirm"><p>Буде видалено рівень, статистику, досягнення та історію білетів. Власні питання залишаться.</p><div class="btn-row"><button class="btn danger" id="resetBtn">Так, скинути прогрес</button></div></div></details>'+
+   '</section>'+
+   '<p class="muted" style="font-size:.85rem">Питання складено за текстом Правил дорожнього руху України (постанова КМУ № 1306). Офіційний перелік екзаменаційних питань і безкоштовний тренажер є на сайті Головного сервісного центру МВС.</p>');
+  var exp=el.querySelector('#exp');
+  try{var copy=Object.assign({},S);delete copy.custom;exp.value=btoa(unescape(encodeURIComponent(JSON.stringify(copy))));}catch(e){exp.value='';}
+  el.querySelector('#copyBtn').onclick=function(){var b=this;try{navigator.clipboard.writeText(exp.value).then(function(){b.textContent='Скопійовано';},function(){exp.select();b.textContent='Виділено — натисніть Ctrl+C';});}catch(e){exp.select();}};
+  el.querySelector('#impBtn').onclick=function(){
+    var msg=el.querySelector('#impMsg');
+    try{var o=JSON.parse(decodeURIComponent(escape(atob(el.querySelector('#imp').value.trim()))));if(typeof o.xp!=='number')throw 0;var keep=S.custom;S=Object.assign(defState(),o);S.custom=keep;save();buildBank();msg.textContent='Прогрес завантажено.';setTimeout(function(){go('profile');},700);}
+    catch(e){msg.textContent='Код не розпізнано. Перевірте, що скопіювали його повністю.';}
+  };
+  function addQs(text){
+    var msg=el.querySelector('#qmsg');
+    try{var arr=JSON.parse(text);if(!Array.isArray(arr))arr=[arr];var ok=arr.filter(function(q){return normalize(q);});if(!ok.length)throw 0;
+      S.custom=(S.custom||[]).concat(ok);save();buildBank();msg.textContent='Додано питань: '+ok.length+'. Вони вже є в білетах, грі та темі «Мої питання».';
+    }catch(e){msg.textContent='Не вдалося прочитати JSON. Потрібен масив об’єктів з полями q та a.';}
+  }
+  el.querySelector('#qadd').onclick=function(){addQs(el.querySelector('#qjson').value);};
+  el.querySelector('#qfile').onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){addQs(String(r.result));};r.readAsText(f);};
+  var qc=el.querySelector('#qclear');if(qc)qc.onclick=function(){S.custom=[];save();buildBank();go('profile');};
+  el.querySelector('#resetBtn').onclick=function(){var keep=S.custom;S=defState();S.custom=keep;save();go('home');};
+}
+
+/* ---------- quiz engine ---------- */
+function makeItem(q){return {q:q,order:shuffle(q.a.map(function(_,k){return k;})),pick:null};}
+function weightedPick(pool,recent){
+  var cand=pool.filter(function(q){return recent.indexOf(q.id)<0;});if(!cand.length)cand=pool;
+  var w=cand.map(function(q){var s=S.stats[q.id];if(!s)return 3;if(s.s===0&&s.w>0)return 5;if(s.s<2)return 2.5;return 1;});
+  var tot=w.reduce(function(a,b){return a+b;},0),r=Math.random()*tot;
+  for(var i=0;i<cand.length;i++){r-=w[i];if(r<=0)return cand[i];}return cand[cand.length-1];
+}
+function stopRun(){if(RUN&&RUN.timer){clearInterval(RUN.timer);RUN.timer=null;}}
+
+function startExam(){
+  var list=shuffle(Q).slice(0,20).map(makeItem);
+  begin({mode:'exam',title:'Білет · 20 питань',items:list,time:1200});
+}
+function startTraining(t){
+  var pool,title;
+  if(t==='__mistakes'){pool=S.mistakes.map(function(id){return QById[id];}).filter(Boolean);title='Мої помилки';}
+  else if(t==='__new'){pool=Q.filter(function(q){return !S.stats[q.id];});if(!pool.length)pool=Q.filter(function(q){return !mastered(q.id);});title='Нові питання';pool=shuffle(pool).slice(0,20);}
+  else if(t==='__all'){pool=Q;title='Усі питання';}
+  else{pool=Q.filter(function(q){return q.t===t;});title=TOPICS[t]||'Тема';}
+  if(!pool.length){toast('✓','Тут усе вивчено','Оберіть іншу тему або гру');return;}
+  begin({mode:'train',title:title,items:shuffle(pool).map(makeItem)});
+}
+function startMarathon(kind){
+  var pool=kind==='signs'?Q.filter(function(q){return q.t==='signs';}):Q;
+  begin({mode:kind,title:kind==='signs'?'Знаки':'Марафон',items:[],pool:pool,lives:3,endless:true});
+}
+function startBlitz(){begin({mode:'blitz',title:'Бліц 60 секунд',items:[],pool:Q,time:60,endless:true});}
+
+function begin(cfg){
+  stopRun();
+  RUN={cfg:cfg,mode:cfg.mode,items:cfg.items,i:0,lives:cfg.lives||0,combo:0,maxCombo:0,correct:0,wrong:0,xp:0,timeLeft:cfg.time||0,started:Date.now(),ended:false,recent:[],confirmExit:false};
+  if(cfg.endless)pushNext();
+  document.body.classList.add('focus');
+  if(cfg.time){RUN.timer=setInterval(tick,1000);}
+  renderQ();
+}
+function pushNext(){var q=weightedPick(RUN.cfg.pool,RUN.recent);RUN.recent.push(q.id);if(RUN.recent.length>Math.min(25,Math.floor(RUN.cfg.pool.length*0.6)))RUN.recent.shift();RUN.items.push(makeItem(q));}
+function tick(){
+  if(!RUN||RUN.ended)return;RUN.timeLeft--;
+  var t=document.getElementById('tmr');if(t){t.textContent=fmtTime(RUN.timeLeft);t.classList.toggle('low',RUN.timeLeft<=(RUN.mode==='blitz'?10:120));}
+  if(RUN.timeLeft<=0)finish();
+}
+function headerHTML(){
+  var R=RUN,m=R.mode,meta='';
+  if(m==='exam'||m==='blitz')meta+='<span class="timer'+(R.timeLeft<=(m==='blitz'?10:120)?' low':'')+'" id="tmr">'+fmtTime(R.timeLeft)+'</span>';
+  if(m==='marathon'||m==='signs'){meta+='<span class="hearts" aria-label="Життя: '+R.lives+'">'+[0,1,2].map(function(k){return IC.heart(k<R.lives);}).join('')+'</span>';}
+  if(m!=='exam'&&m!=='train')meta+='<span class="mono" aria-label="Рахунок">'+R.correct+'</span>';
+  if(m!=='exam'&&R.combo>=3)meta+='<span class="combo" id="cmb">×'+R.combo+'</span>';
+  var h='<div class="qtop"><div class="qbar"><button class="x" data-q="exit" aria-label="Вийти">'+IC.x+'</button><span class="ttl">'+esc(R.cfg.title)+'</span><span class="meta">'+meta+'</span></div>';
+  if(m==='exam'){h+='<div class="cells">'+R.items.map(function(it,k){var c='';if(it.pick!=null)c=it.order[it.pick]===0?'ok':'bad';return '<button data-q="jump" data-k="'+k+'" class="'+c+(k===R.i?' cur':'')+'" aria-label="Питання '+(k+1)+'">'+(k+1)+'</button>';}).join('')+'</div>';}
+  else if(m==='train'){h+='<div class="track"><i style="width:'+Math.round(R.i/R.items.length*100)+'%"></i></div>';}
+  if(R.confirmExit){h+='<div class="confirm"><p><b>Вийти?</b> '+(m==='exam'?'Білет не буде зараховано.':'Результат цієї гри збережеться.')+'</p><div class="btn-row"><button class="btn danger" data-q="exitYes">Вийти</button><button class="btn ghost" data-q="exitNo">Продовжити</button></div></div>';}
+  return h+'</div>';
+}
+function renderQ(){
+  var R=RUN,it=R.items[R.i],q=it.q,answered=it.pick!=null,m=R.mode;
+  var letters=['А','Б','В','Г','Ґ','Д','Е'];
+  var showResult=answered&&m!=='exam';
+  var opts=it.order.map(function(orig,k){
+    var cls='opt';
+    if(answered){
+      if(m==='exam'){if(k===it.pick)cls+=orig===0?' right':' wrong';}
+      else{if(orig===0)cls+=' right';else if(k===it.pick)cls+=' wrong';}
+    }
+    return '<button class="'+cls+'" data-q="ans" data-k="'+k+'"'+(answered?' disabled':'')+'><span class="k">'+letters[k]+'</span><span>'+esc(q.a[orig])+'</span></button>';
+  }).join('');
+  var num=m==='exam'?('Питання '+(R.i+1)+' з 20'):m==='train'?('Питання '+(R.i+1)+' з '+R.items.length):('Питання '+(R.i+1));
+  var media=q.s?'<div class="qmedia">'+signSVG(q.s)+'</div>':(q.img?'<div class="qmedia"><img src="'+esc(q.img)+'" alt="Ілюстрація до питання"></div>':'');
+  var fb='';
+  if(showResult){var ok=it.order[it.pick]===0;fb='<div class="fb'+(ok?'':' bad')+'"><b>'+(ok?pickPraise():'Неправильно')+'</b><p>'+esc(q.e||'')+'</p>'+(q.r?'<span class="ref">'+refText(q.r)+'</span>':'')+'</div>';}
+  var foot='';
+  if(m==='exam'){
+    var left=R.items.filter(function(x){return x.pick==null;}).length;
+    foot='<div class="qfoot"><span class="kbd">Без відповіді: '+left+'</span><div class="btn-row">'+(answered?'<button class="btn" data-q="next">'+(left?'Наступне':'Завершити')+'</button>':'<button class="btn ghost" data-q="skip">Пропустити</button>')+(left&&answered?'<button class="btn ghost" data-q="finish">Завершити</button>':'')+'</div></div>';
+  }else if(showResult&&m!=='blitz'){
+    var last=m==='train'&&R.i>=R.items.length-1;var dead=(m==='marathon'||m==='signs')&&R.lives<=0;
+    foot='<div class="qfoot"><span class="kbd">Enter — далі</span><button class="btn" data-q="next" id="nextBtn">'+(last||dead?'Результат':'Далі')+'</button></div>';
+  }else if(!answered){foot='<div class="qfoot"><span class="kbd">Клавіші 1–'+q.a.length+' для відповіді</span></div>';}
+  view.innerHTML='<div class="page">'+headerHTML()+
+    '<article class="qcard" id="qcard"><div class="qhead"><span class="eyebrow">'+num+'</span><span class="eyebrow">'+esc(TOPICS[q.t]||'')+'</span></div>'+media+
+    '<p class="qtext">'+esc(q.q)+'</p><div class="opts">'+opts+'</div>'+fb+foot+'</article></div>';
+  var nb=document.getElementById('nextBtn');if(nb)nb.focus({preventScroll:true});
+}
+var PRAISE=['Правильно','Точно','Так і є','Чудово','Бездоганно'];
+function pickPraise(){return PRAISE[Math.floor(Math.random()*PRAISE.length)];}
+function refText(r){if(r==='Безпека')return 'Безпека руху';if(r==='33')return 'ПДР, розділ 33 «Дорожні знаки»';return r.indexOf('.')>0?'ПДР, пункт '+r:'ПДР, розділ '+r;}
+
+view.addEventListener('click',function(e){
+  if(!RUN||RUN.ended)return;var b=e.target.closest('[data-q]');if(!b)return;
+  var a=b.dataset.q;
+  if(a==='ans')answer(+b.dataset.k);
+  else if(a==='next')next();
+  else if(a==='skip')nextUnanswered(true);
+  else if(a==='jump'){RUN.i=+b.dataset.k;renderQ();}
+  else if(a==='finish')finish();
+  else if(a==='exit'){RUN.confirmExit=true;renderQ();}
+  else if(a==='exitNo'){RUN.confirmExit=false;renderQ();}
+  else if(a==='exitYes'){if(RUN.mode==='exam'){RUN.ended=true;stopRun();go('ticket');}else finish();}
+});
+document.addEventListener('keydown',function(e){
+  if(!RUN||RUN.ended||e.ctrlKey||e.metaKey||e.altKey)return;
+  if(/^(INPUT|TEXTAREA)$/.test((e.target.tagName||'')))return;
+  var it=RUN.items[RUN.i];var n=parseInt(e.key,10);
+  if(n>=1&&n<=it.q.a.length&&it.pick==null){e.preventDefault();answer(n-1);}
+  else if((e.key==='Enter'||e.key===' ')&&it.pick!=null&&document.querySelector('[data-q="next"]')){e.preventDefault();next();}
+});
+
+function answer(k){
+  var R=RUN,it=R.items[R.i];if(it.pick!=null)return;
+  it.pick=k;var ok=it.order[k]===0;record(it.q,ok);
+  if(ok){R.correct++;R.combo++;if(R.combo>R.maxCombo)R.maxCombo=R.combo;}else{R.wrong++;R.combo=0;vibrate(80);}
+  var m=R.mode,gain=0;
+  if(ok){gain=m==='exam'?10:m==='train'?8:10+Math.min(R.combo,10);R.xp+=gain;addXP(gain);}
+  if(!ok&&(m==='marathon'||m==='signs'))R.lives--;
+  if(m!=='exam'&&m!=='train'&&R.maxCombo>S.best.combo){S.best.combo=R.maxCombo;save();}
+  checkAch();
+  if(m==='blitz'){
+    if(!ok)R.timeLeft=Math.max(0,R.timeLeft-5);
+    renderQ();var card=document.getElementById('qcard');if(card&&!ok)card.classList.add('shake');
+    setTimeout(function(){if(R.ended||RUN!==R)return;if(R.timeLeft<=0){finish();return;}pushNext();R.i++;renderQ();},ok?450:1100);
+    return;
+  }
+  renderQ();
+  var card=document.getElementById('qcard');if(card&&!ok)card.classList.add('shake');
+  var c=document.getElementById('cmb');if(c&&ok)c.classList.add('pop');
+}
+function next(){
+  var R=RUN,m=R.mode;
+  if(m==='exam'){nextUnanswered(false);return;}
+  if(m==='train'){if(R.i>=R.items.length-1){finish();return;}R.i++;renderQ();window.scrollTo(0,0);return;}
+  if(R.lives<=0){finish();return;}
+  pushNext();R.i++;renderQ();window.scrollTo(0,0);
+}
+function nextUnanswered(skipping){
+  var R=RUN,n=R.items.length;
+  for(var s=1;s<=n;s++){var k=(R.i+s)%n;if(R.items[k].pick==null&&(k!==R.i||!skipping)){R.i=k;renderQ();window.scrollTo(0,0);return;}}
+  if(R.items.every(function(x){return x.pick!=null;}))finish();else{renderQ();}
+}
+function finish(){
+  var R=RUN;if(R.ended)return;R.ended=true;stopRun();
+  var m=R.mode,html='',used=Math.round((Date.now()-R.started)/1000);
+  document.body.classList.remove('focus');
+  if(m==='exam'){
+    var score=R.items.filter(function(x){return x.pick!=null&&x.order[x.pick]===0;}).length;var errs=20-score;var pass=errs<=2;
+    if(pass){addXP(100);R.xp+=100;}
+    S.exams.push({d:Date.now(),score:score,pass:pass,time:Math.min(used,1200)});if(S.exams.length>200)S.exams=S.exams.slice(-200);save();checkAch();
+    html='<section class="result"><span class="eyebrow" style="color:var(--asphalt-muted)">Результат білета</span><span class="big mono">'+score+'/20</span><span class="verdict '+(pass?'ok':'bad')+'">'+(pass?'Іспит складено':'Не складено')+'</span><p class="muted">'+(pass?'Помилок: '+errs+'. Так тримати.':'Помилок: '+errs+'. Для складання дозволено не більше двох.')+' Час: '+fmtTime(Math.min(used,1200))+' · +'+R.xp+' XP</p></section>'+
+      '<div class="btn-row"><button class="btn go" data-act="exam">Новий білет</button><button class="btn ghost" data-act="go" data-arg="home">На головну</button></div>'+
+      '<section class="section"><h2>Розбір питань</h2><div class="review">'+R.items.map(reviewRow).join('')+'</div></section>';
+  }else{
+    var total=R.correct+R.wrong,acc=total?Math.round(R.correct/total*100):0,best='',isRec=false;
+    if(m==='marathon'||m==='signs'||m==='blitz'){if(R.correct>S.best[m]){S.best[m]=R.correct;isRec=R.correct>0;}best=S.best[m];save();checkAch();}
+    var label=m==='train'?'Правильних відповідей':m==='blitz'?'Відповідей за 60 секунд':'Рахунок';
+    var again=m==='train'?'':'<button class="btn go" data-act="'+(m==='marathon'?'marathon':m==='signs'?'signs':'blitz')+'">Грати ще</button>';
+    var wrongs=R.items.filter(function(x){return x.pick!=null&&x.order[x.pick]!==0;});
+    html='<section class="result"><span class="eyebrow" style="color:var(--asphalt-muted)">'+esc(R.cfg.title)+'</span><span class="big mono">'+R.correct+(m==='train'?'/'+R.items.length:'')+'</span><p class="muted">'+label+' · точність '+acc+'% · найдовше комбо ×'+R.maxCombo+' · +'+R.xp+' XP</p>'+
+      (isRec?'<span class="verdict ok">Новий рекорд!</span>':(best!==''?'<p class="muted">Рекорд: '+best+'</p>':''))+'</section>'+
+      '<div class="btn-row">'+again+(m==='train'?'<button class="btn" data-act="go" data-arg="topics">До тем</button>':'')+(S.mistakes.length?'<button class="btn ghost" data-act="mistakes">Повторити помилки</button>':'')+'<button class="btn ghost" data-act="go" data-arg="home">На головну</button></div>'+
+      (wrongs.length?'<section class="section"><h2>Помилки цієї спроби</h2><div class="review">'+wrongs.map(reviewRow).join('')+'</div></section>':'');
+  }
+  view.innerHTML='<div class="page">'+html+'</div>';window.scrollTo(0,0);
+}
+function reviewRow(it,k){
+  var q=it.q,ok=it.pick!=null&&it.order[it.pick]===0;
+  var yours=it.pick==null?'<i>без відповіді</i>':esc(q.a[it.order[it.pick]]);
+  return '<details><summary><span class="n'+(ok?'':' bad')+'">'+(k+1)+'</span><span>'+esc(q.q)+(q.s?' <span class="muted">(знак)</span>':'')+'</span></summary><div class="body">'+(q.s?'<div style="width:90px">'+signSVG(q.s)+'</div>':'')+
+    (ok?'':'<p><span class="pill bad">Ваша відповідь</span> '+yours+'</p>')+'<p><span class="pill ok">Правильно</span> '+esc(q.a[0])+'</p><p class="muted">'+esc(q.e)+'</p>'+(q.r?'<p class="muted" style="font-size:.82rem;font-weight:600">'+refText(q.r)+'</p>':'')+'</div></details>';
+}
+
+go('home');
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+</script>
+</body>
+</html>
