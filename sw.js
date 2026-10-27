@@ -1,5 +1,5 @@
 // Офлайн-кеш «Зеленого сигналу». Після оновлення сайту змініть VERSION, щоб телефони отримали нову версію.
-const VERSION = 'zs-v3';
+const VERSION = 'zs-v4';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
